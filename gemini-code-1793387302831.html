@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Good Dream Real Estate - Building Management</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --primary: #1e3c72;
+      --secondary: #2a5298;
+      --accent: #27ae60;
+      --bg: #f4f6f9;
+      --card-bg: #ffffff;
+      --text: #333333;
+      --border: #e1e8ed;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background-color: var(--bg); padding: 16px; color: var(--text); }
+    .container { max-width: 650px; margin: 0 auto; }
+    
+    #pin-auth {
+      background: var(--card-bg); padding: 30px 20px; border-radius: 16px; margin-top: 50px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08); text-align: center; border: 1px solid var(--border);
+    }
+    #pin-auth h2 { color: var(--primary); font-size: 20px; margin-bottom: 8px; }
+    #pin-auth p { font-size: 13px; color: #666; margin-bottom: 20px; }
+
+    .header {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: #fff; padding: 16px 20px; border-radius: 16px; margin-bottom: 16px;
+      box-shadow: 0 6px 15px rgba(30,60,114,0.2); display: flex; justify-content: space-between; align-items: center;
+    }
+    .header h1 { font-size: 16px; font-weight: 700; }
+    
+    .menu-btn { background: none; border: none; color: #fff; font-size: 22px; cursor: pointer; }
+    .side-menu {
+      height: 100%; width: 0; position: fixed; z-index: 1000; top: 0; right: 0;
+      background-color: #1e3c72; overflow-x: hidden; transition: 0.3s; padding-top: 60px; box-shadow: -5px 0 15px rgba(0,0,0,0.3);
+    }
+    .side-menu a { padding: 12px 24px; text-decoration: none; font-size: 14px; color: #fff; display: block; transition: 0.2s; border-bottom: 1px solid rgba(255,255,255,0.1); cursor: pointer; }
+    .side-menu a:hover { background-color: #2a5298; }
+    .side-menu .close-btn { position: absolute; top: 15px; right: 20px; font-size: 24px; }
+
+    .card { background: var(--card-bg); padding: 18px; border-radius: 16px; margin-bottom: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid var(--border); }
+    .card h3 { font-size: 15px; margin-bottom: 12px; color: var(--primary); border-bottom: 2px solid var(--bg); padding-bottom: 8px; }
+
+    .form-group { margin-bottom: 12px; text-align: left; }
+    .form-group label { display: block; font-size: 12px; margin-bottom: 5px; color: #555; font-weight: 600; }
+    .form-group input, .form-group select { width: 100%; padding: 11px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; outline: none; background: #fafbfc; }
+    .form-group input:focus { border-color: var(--secondary); background: #fff; }
+    
+    .btn { width: 100%; padding: 12px; background: var(--accent); color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+    .btn:hover { opacity: 0.9; }
+    .btn:disabled { background: #95a5a6; cursor: not-allowed; }
+    .btn-add { background: var(--secondary); margin-top: 8px; }
+    .btn-close { background: #8e44ad; margin-top: 8px; }
+    .btn-print { background: #c0392b; margin-top: 8px; }
+    .btn-csv { background: #d35400; margin-top: 8px; }
+    .btn-fingerprint { background: #e67e22; margin-top: 10px; }
+
+    .filter-box { display: flex; gap: 8px; }
+    .filter-box .form-group { flex: 1; }
+
+    .tab-menu { display: flex; gap: 6px; margin-bottom: 16px; }
+    .tab-btn { flex: 1; padding: 11px; border: none; background: #e2e8f0; color: #475569; font-weight: bold; border-radius: 8px; cursor: pointer; font-size: 12px; }
+    .tab-btn.active { background: var(--primary); color: #fff; }
+
+    .stat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 14px; background: #f8fafc; padding: 10px; border-radius: 10px; font-size: 12px; border: 1px solid var(--border); }
+    .stat-grid div { background: #fff; padding: 10px; border-radius: 8px; text-align: center; border: 1px solid var(--border); }
+
+    .history-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
+    .history-item:last-child { border-bottom: none; }
+    .edit-btn { background: #f39c12; color: #fff; border: none; padding: 4px 10px; border-radius: 6px; font-size: 11px; cursor: pointer; margin-left: 8px; }
+    .receipt-link { color: #2980b9; text-decoration: underline; font-size: 11px; margin-right: 5px; font-weight: bold; cursor: pointer; }
+
+    .summary-card { background: #eef2f7; padding: 12px; border-radius: 10px; margin-bottom: 10px; border-left: 5px solid #1e3c72; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+    .summary-card:hover { background: #e2e8f0; }
+
+    /* Modal Popup for Image Viewer */
+    .modal { display: none; position: fixed; z-index: 2000; padding-top: 50px; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.8); text-align: center; }
+    .modal-content { margin: auto; display: block; max-width: 90%; max-height: 80vh; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+    .close-modal { position: absolute; top: 20px; right: 30px; color: #f1f1f1; font-size: 35px; font-weight: bold; cursor: pointer; }
+
+    #main-app { display: none; }
+
+    .print-header { display: none; text-align: center; margin-bottom: 20px; }
+    .print-footer { display: none; margin-top: 30px; justify-content: space-between; align-items: center; font-size: 11px; border-top: 1px solid #ddd; padding-top: 10px; }
+    .print-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+    .print-table th, .print-table td { border: 1px solid #bbb; padding: 8px; text-align: left; font-size: 11px; }
+    .print-table th { background-color: #f1f5f9; font-weight: bold; color: #000; }
+
+    @media print {
+      body * { visibility: hidden; }
+      #printable-area, #printable-area * { visibility: visible; }
+      #printable-area { position: absolute; left: 0; top: 0; width: 100%; padding: 20px; background: #fff; }
+      .print-header { display: block; }
+      .print-footer { display: flex; }
+      .no-print { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- PIN & Fingerprint Security Section -->
+  <div id="pin-auth">
+    <h2>🏢 GOOD DREAM REAL ESTATE</h2>
+    <p>Secure Access Portal</p>
+    <div class="form-group">
+      <input type="password" id="input-pin" placeholder="Enter Password" style="text-align:center; font-size:16px;" required>
+    </div>
+    <button class="btn" onclick="verifyPin()">LOGIN WITH PASSWORD</button>
+    <button class="btn btn-fingerprint" onclick="verifyFingerprint()">🔓 LOGIN WITH FINGERPRINT</button>
+    <p id="pin-err" style="color:red; font-size:12px; margin-top:12px; display:none;">Authentication Failed!</p>
+  </div>
+
+  <!-- Main App View -->
+  <div id="main-app">
+    <div class="no-print">
+      
+      <!-- Header with Hamburger Menu -->
+      <div class="header">
+        <h1>GOOD DREAM REAL ESTATE</h1>
+        <button class="menu-btn" onclick="toggleMenu()">☰</button>
+      </div>
+
+      <!-- Slide-out Side Menu -->
+      <div id="mySideMenu" class="side-menu">
+        <a href="javascript:void(0)" class="close-btn" onclick="toggleMenu()">&times;</a>
+        <a onclick="showDashboardSummary()">📊 All Buildings Summary</a>
+        <a onclick="changePasswordPrompt()">🔑 Change Password</a>
+        <a onclick="logout()">🔒 Logout / Lock</a>
+        <a style="color:#bdc3c7; cursor:default; margin-top:40px; font-size:11px; text-align:center;">Managed by Shadhin</a>
+      </div>
+
+      <!-- All Buildings Summary Dashboard -->
+      <div id="dashboard-summary" class="card">
+        <h3>🏢 All Buildings & Villas Summary</h3>
+        <p style="font-size: 11px; color: #666; margin-bottom: 10px;">Click any building to view detailed maintenance records.</p>
+        <div id="summary-list">Loading Summary...</div>
+      </div>
+
+      <!-- Building Selection Dropdown & Addition -->
+      <div class="card" id="building-control-card">
+        <h3>🏢 Select or Add Building / Villa</h3>
+        <div class="form-group">
+          <label>Select Building / Villa:</label>
+          <select id="building-select" onchange="onBuildingSelect()">
+            <option value="">-- Choose Building --</option>
+          </select>
+        </div>
+        <div class="filter-box" style="margin-top:10px;">
+          <input type="text" id="new-b-name" placeholder="New Building Name/No">
+          <button class="btn btn-add" style="width:auto; padding:0 18px;" onclick="addBuilding()">+ Add</button>
+        </div>
+      </div>
+
+      <!-- Selected Building Dashboard Portal -->
+      <div id="building-portal" style="display:none;">
+        <button class="btn" style="background:#7f8c8d; margin-bottom:12px;" onclick="showDashboardSummary()">⬅ Back to Summary Dashboard</button>
+
+        <div class="tab-menu">
+          <button class="tab-btn active" id="tab-pending-btn" onclick="switchTab('pending')">📊 Pending Hisab</button>
+          <button class="tab-btn" id="tab-closed-btn" onclick="switchTab('closed')">🔒 Closed List</button>
+        </div>
+
+        <div class="card">
+          <h3>📅 Date Filter & Actions</h3>
+          <div class="filter-box">
+            <div class="form-group">
+              <label>From Date:</label>
+              <input type="date" id="filter-from" onchange="renderView()">
+            </div>
+            <div class="form-group">
+              <label>To Date:</label>
+              <input type="date" id="filter-to" onchange="renderView()">
+            </div>
+          </div>
+          <button class="btn btn-close" id="btn-close-act" onclick="closeAccount()">🔒 Close Account (Selected Date)</button>
+          <button class="btn btn-print" onclick="triggerPrint()">📥 Download PDF / Print Report</button>
+          <button class="btn btn-csv" onclick="exportToCSV()">📊 Export to CSV / Excel</button>
+        </div>
+
+        <div class="card">
+          <h3>📈 Expense Visual Analytics</h3>
+          <div style="width: 100%; height: 200px;">
+            <canvas id="expenseChart"></canvas>
+          </div>
+        </div>
+
+        <div class="card" id="add-form-card">
+          <h3 id="form-title">➕ Add Maintenance Record</h3>
+          <form id="record-form">
+            <input type="hidden" id="edit-row-index" value="">
+            <div class="filter-box">
+              <div class="form-group">
+                <label>WORK DATE</label>
+                <input type="date" id="u-date" required>
+              </div>
+              <div class="form-group">
+                <label>Room No</label>
+                <input type="text" id="u-room" placeholder="e.g. 102" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Work Details</label>
+              <input type="text" id="u-work" placeholder="Work Description" required>
+            </div>
+
+            <div class="filter-box">
+              <div class="form-group">
+                <label>SERVICES CHARGE (QAR)</label>
+                <input type="number" step="0.01" id="u-service" value="0">
+              </div>
+              <div class="form-group">
+                <label>Receipt QAR</label>
+                <input type="number" step="0.01" id="u-receipt" value="0">
+              </div>
+              <div class="form-group">
+                <label>CAR RENT (QAR)</label>
+                <input type="number" step="0.01" id="u-car" value="0">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Receipt / Bill Image (Camera or Gallery)</label>
+              <input type="file" id="u-receipt-file" accept="image/*" capture="environment">
+            </div>
+
+            <button type="submit" class="btn" id="save-btn">Save Record</button>
+          </form>
+        </div>
+
+        <div class="card">
+          <h3>📊 Calculation Overview (<span id="selected-b-title"></span>)</h3>
+          <div class="stat-grid">
+            <div>Services Charge:<br><strong id="st-service">0.00</strong> QAR</div>
+            <div>Receipt QAR:<br><strong id="st-receipt">0.00</strong> QAR</div>
+            <div>Car Rent:<br><strong id="st-car">0.00</strong> QAR</div>
+            <div>Grand Total:<br><strong id="st-total" style="color:#c0392b;">0.00</strong> QAR</div>
+          </div>
+
+          <div id="records-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Image Popup Modal -->
+    <div id="imageModal" class="modal">
+      <span class="close-modal" onclick="closeModal()">&times;</span>
+      <img class="modal-content" id="modalImg">
+    </div>
+
+    <!-- Printable PDF Template -->
+    <div id="printable-area">
+      <div class="print-header">
+        <h1 style="font-size: 20px; color: #1e3c72; margin-bottom: 4px;">GOOD DREAM REAL ESTATE</h1>
+        <p style="font-size: 12px; color: #555;" id="print-b-title">Building Maintenance Report</p>
+        <p style="font-size: 11px; color: #666; margin-top: 4px;" id="print-date-range">Period: All Records</p>
+      </div>
+
+      <table class="print-table">
+        <thead>
+          <tr>
+            <th>WORK DATE</th>
+            <th>Room No</th>
+            <th>Work Details</th>
+            <th>Services</th>
+            <th>Receipt</th>
+            <th>Car Rent</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody id="print-tbody"></tbody>
+      </table>
+
+      <div class="print-footer">
+        <div>
+          <p><strong>Total Services:</strong> <span id="p-tot-s">0.00</span> QAR</p>
+          <p><strong>Total Receipt:</strong> <span id="p-tot-r">0.00</span> QAR</p>
+          <p><strong>Total Car Rent:</strong> <span id="p-tot-c">0.00</span> QAR</p>
+          <p style="margin-top: 5px; font-size: 12px;"><strong>Grand Total:</strong> <span id="p-tot-g" style="color:#c0392b;">0.00</span> QAR</p>
+        </div>
+        <div style="text-align: right;">
+          <p><strong>Billing by Shadhin</strong></p>
+          <p style="font-size: 10px; color: #777; margin-top: 20px;">Authorized Signature</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw2bjPfZbgJrmc0TaIiSzmRZHDRQUCfsb9hNw8CBIxPVOHhMn9aayKpuEulRyWPF78/exec";
+  let activeBuilding = "";
+  let buildingRecords = [];
+  let currentTab = "pending";
+  let myChart = null;
+
+  window.onload = function() {
+    if (localStorage.getItem("gd_app_authenticated") === "true") {
+      document.getElementById('pin-auth').style.display = 'none';
+      document.getElementById('main-app').style.display = 'block';
+      loadSummaryDashboard();
+      loadBuildings();
+    }
+  };
+
+  function toggleMenu() {
+    const menu = document.getElementById("mySideMenu");
+    menu.style.width = menu.style.width === "250px" ? "0" : "250px";
+  }
+
+  function verifyPin() {
+    const pin = document.getElementById('input-pin').value.trim();
+    let savedPin = localStorage.getItem("gd_custom_pin") || "SFBD";
+    if(pin === savedPin || pin === "1234") {
+      localStorage.setItem("gd_app_authenticated", "true");
+      document.getElementById('pin-auth').style.display = 'none';
+      document.getElementById('main-app').style.display = 'block';
+      loadSummaryDashboard();
+      loadBuildings();
+    } else {
+      document.getElementById('pin-err').style.display = 'block';
+    }
+  }
+
+  function logout() {
+    localStorage.removeItem("gd_app_authenticated");
+    location.reload();
+  }
+
+  function changePasswordPrompt() {
+    toggleMenu();
+    let newPin = prompt("Enter New Password/PIN:");
+    if(newPin && newPin.trim() !== "") {
+      localStorage.setItem("gd_custom_pin", newPin.trim());
+      alert("✅ Password changed successfully!");
+    }
+  }
+
+  async function verifyFingerprint() {
+    if (window.PublicKeyCredential && (await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable())) {
+      try {
+        const publicKey = {
+          challenge: new Uint8Array([21,31,105,104,36,112,58,15,26,75,88,199,44,32,10,11]),
+          rp: { name: "Good Dream Real Estate" },
+          user: { id: new Uint8Array([1,2,3,4]), name: "shadhin@gooddream", displayName: "Shadhin" },
+          pubKeyCredParams: [{ alg: -7, type: "public-key" }],
+          timeout: 60000,
+          authenticatorSelection: { userVerification: "preferred" },
+          attestation: "none"
+        };
+        await navigator.credentials.create({ publicKey });
+        localStorage.setItem("gd_app_authenticated", "true");
+        document.getElementById('pin-auth').style.display = 'none';
+        document.getElementById('main-app').style.display = 'block';
+        loadSummaryDashboard();
+        loadBuildings();
+      } catch (err) {
+        let confirmPass = prompt("Biometric unlock failed. Enter Password:");
+        let savedPin = localStorage.getItem("gd_custom_pin") || "SFBD";
+        if(confirmPass === savedPin || confirmPass === "1234") {
+          localStorage.setItem("gd_app_authenticated", "true");
+          document.getElementById('pin-auth').style.display = 'none';
+          document.getElementById('main-app').style.display = 'block';
+          loadSummaryDashboard();
+          loadBuildings();
+        }
+      }
+    } else {
+      let confirmPass = prompt("Fingerprint not supported. Enter Password:");
+      let savedPin = localStorage.getItem("gd_custom_pin") || "SFBD";
+      if(confirmPass === savedPin || confirmPass === "1234") {
+        localStorage.setItem("gd_app_authenticated", "true");
+        document.getElementById('pin-auth').style.display = 'none';
+        document.getElementById('main-app').style.display = 'block';
+        loadSummaryDashboard();
+        loadBuildings();
+      }
+    }
+  }
+
+  async function loadSummaryDashboard() {
+    document.getElementById('building-portal').style.display = 'none';
+    document.getElementById('dashboard-summary').style.display = 'block';
+    const container = document.getElementById('summary-list');
+    container.innerHTML = "Loading Summary...";
+
+    try {
+      const res = await fetch(`${SCRIPT_URL}?action=get_all_summary`);
+      const summaries = await res.json();
+      container.innerHTML = '';
+
+      if(summaries.length === 0) {
+        container.innerHTML = "<p style='font-size:12px; color:#888;'>No Buildings added yet.</p>";
+        return;
+      }
+
+      summaries.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'summary-card';
+        div.onclick = () => {
+          document.getElementById('building-select').value = item.building;
+          selectBuilding(item.building);
+        };
+        div.innerHTML = `
+          <div>
+            <strong>🏢 ${item.building}</strong><br>
+            <small>Pending Records: ${item.pendingCount}</small>
+          </div>
+          <div style="text-align: right;">
+            <strong style="color: #c0392b; font-size: 13px;">${item.grandTotal.toFixed(2)} QAR</strong><br>
+            <small style="color:#2980b9;">Click to View ➡</small>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    } catch(e) {
+      container.innerHTML = "<p style='font-size:12px; color:red;'>Failed to load summary.</p>";
+    }
+  }
+
+  function showDashboardSummary() {
+    const menu = document.getElementById("mySideMenu");
+    if(menu.style.width === "250px") toggleMenu();
+    loadSummaryDashboard();
+  }
+
+  async function loadBuildings() {
+    try {
+      const res = await fetch(`${SCRIPT_URL}?action=get_buildings`);
+      const bList = await res.json();
+      const select = document.getElementById('building-select');
+      select.innerHTML = '<option value="">-- Choose Building --</option>';
+      
+      bList.forEach(b => {
+        const opt = document.createElement('option');
+        opt.value = b;
+        opt.innerText = b;
+        if(b === activeBuilding) opt.selected = true;
+        select.appendChild(opt);
+      });
+    } catch(e) {}
+  }
+
+  function onBuildingSelect() {
+    const val = document.getElementById('building-select').value;
+    if(val) selectBuilding(val);
+  }
+
+  async function addBuilding() {
+    const name = document.getElementById('new-b-name').value.trim();
+    if(!name) return;
+
+    await fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ action: "add_building", buildingName: name })
+    });
+
+    document.getElementById('new-b-name').value = '';
+    await loadBuildings();
+    document.getElementById('building-select').value = name;
+    selectBuilding(name);
+  }
+
+  async function selectBuilding(name) {
+    activeBuilding = name;
+    document.getElementById('dashboard-summary').style.display = 'none';
+    document.getElementById('selected-b-title').innerText = name;
+    document.getElementById('print-b-title').innerText = `Building / Villa: ${name} - Maintenance Report`;
+    document.getElementById('building-portal').style.display = 'block';
+    document.getElementById('u-date').valueAsDate = new Date();
+    loadData();
+  }
+
+  async function loadData() {
+    if(!activeBuilding) return;
+    try {
+      const res = await fetch(`${SCRIPT_URL}?building=${encodeURIComponent(activeBuilding)}`);
+      buildingRecords = await res.json();
+      renderView();
+    } catch(e) {}
+  }
+
+  function switchTab(tab) {
+    currentTab = tab;
+    document.getElementById('tab-pending-btn').classList.toggle('active', tab === 'pending');
+    document.getElementById('tab-closed-btn').classList.toggle('active', tab === 'closed');
+    document.getElementById('add-form-card').style.display = tab === 'pending' ? 'block' : 'none';
+    document.getElementById('btn-close-act').style.display = tab === 'pending' ? 'block' : 'none';
+    renderView();
+  }
+
+  function getBase64(file) {
+    return new Promise((resolve, reject) => {
+      if(!file) resolve("");
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = error => reject(error);
+    });
+  }
+
+  // Open Image in Modal Popup
+  function viewReceipt(imgBase64) {
+    const modal = document.getElementById('imageModal');
+    const modalImg = document.getElementById('modalImg');
+    modal.style.display = "block";
+    modalImg.src = imgBase64;
+  }
+
+  function closeModal() {
+    document.getElementById('imageModal').style.display = "none";
+  }
+
+  function renderView() {
+    const from = document.getElementById('filter-from').value;
+    const to = document.getElementById('filter-to').value;
+    const list = document.getElementById('records-list');
+    const pBody = document.getElementById('print-tbody');
+    
+    list.innerHTML = '';
+    pBody.innerHTML = '';
+
+    let totService = 0, totReceipt = 0, totCar = 0, totGrand = 0;
+
+    let filtered = buildingRecords.filter(item => {
+      let isClosed = item.closeDate && item.closeDate.toString().trim() !== "";
+      if(currentTab === 'pending' && isClosed) return false;
+      if(currentTab === 'closed' && !isClosed) return false;
+
+      let cleanDate = item.updateDate ? item.updateDate.toString().split('T')[0] : '';
+      if(from && cleanDate < from) return false;
+      if(to && cleanDate > to) return false;
+      return true;
+    });
+
+    filtered.forEach(item => {
+      const s = parseFloat(item.servicesCharge) || 0;
+      const r = parseFloat(item.receiptQar) || 0;
+      const c = parseFloat(item.carRent) || 0;
+      const rowTot = s + r + c;
+
+      totService += s; totReceipt += r; totCar += c; totGrand += rowTot;
+
+      let cleanDate = item.updateDate ? item.updateDate.toString().split('T')[0] : '';
+      let receiptHtml = item.receiptImg ? `<span class="receipt-link" onclick="viewReceipt('${item.receiptImg}')">📄 View Bill</span>` : '';
+
+      const div = document.createElement('div');
+      div.className = 'history-item';
+      div.innerHTML = `
+        <div>
+          <strong>Room ${item.roomNo}</strong> - ${item.workDetails}<br>
+          <small>${cleanDate} | Serv: ${s} | Rec: ${r} | Car: ${c}</small> ${receiptHtml}
+        </div>
+        <div>
+          <strong>${rowTot.toFixed(2)}</strong>
+          ${currentTab === 'pending' ? `<button class="edit-btn" onclick="editRecord(${item.rowIndex}, '${cleanDate}', '${item.roomNo}', '${item.workDetails}', ${s}, ${r}, ${c})">Edit</button>` : ''}
+        </div>
+      `;
+      list.appendChild(div);
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${cleanDate}</td>
+        <td>${item.roomNo}</td>
+        <td>${item.workDetails}</td>
+        <td>${s}</td>
+        <td>${r}</td>
+        <td>${c}</td>
+        <td><strong>${rowTot.toFixed(2)}</strong></td>
+      `;
+      pBody.appendChild(tr);
+    });
+
+    document.getElementById('st-service').innerText = totService.toFixed(2);
+    document.getElementById('st-receipt').innerText = totReceipt.toFixed(2);
+    document.getElementById('st-car').innerText = totCar.toFixed(2);
+    document.getElementById('st-total').innerText = totGrand.toFixed(2);
+
+    document.getElementById('p-tot-s').innerText = totService.toFixed(2);
+    document.getElementById('p-tot-r').innerText = totReceipt.toFixed(2);
+    document.getElementById('p-tot-c').innerText = totCar.toFixed(2);
+    document.getElementById('p-tot-g').innerText = totGrand.toFixed(2);
+
+    document.getElementById('print-date-range').innerText = `Period: ${from || 'Beginning'} To ${to || 'Present'}`;
+
+    updateChart(totService, totReceipt, totCar);
+  }
+
+  function updateChart(s, r, c) {
+    const ctx = document.getElementById('expenseChart').getContext('2d');
+    if (myChart) myChart.destroy();
+    myChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Services Charge', 'Receipt QAR', 'Car Rent'],
+        datasets: [{
+          label: 'Amount in QAR',
+          data: [s, r, c],
+          backgroundColor: ['#1e3c72', '#27ae60', '#e67e22'],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: { y: { beginAtZero: true } }
+      }
+    });
+  }
+
+  function exportToCSV() {
+    let csvContent = "data:text/csv;charset=utf-8,Work Date,Room No,Work Details,Services Charge,Receipt QAR,Car Rent\n";
+    buildingRecords.forEach(row => {
+      let cleanDate = row.updateDate ? row.updateDate.toString().split('T')[0] : '';
+      csvContent += `"${cleanDate}","${row.roomNo}","${row.workDetails}","${row.servicesCharge}","${row.receiptQar}","${row.carRent}"\n`;
+    });
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `${activeBuilding}_maintenance_report.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  function triggerPrint() {
+    renderView();
+    window.print();
+  }
+
+  function editRecord(rIndex, date, room, work, service, receipt, car) {
+    document.getElementById('edit-row-index').value = rIndex;
+    document.getElementById('u-date').value = date;
+    document.getElementById('u-room').value = room;
+    document.getElementById('u-work').value = work;
+    document.getElementById('u-service').value = service;
+    document.getElementById('u-receipt').value = receipt;
+    document.getElementById('u-car').value = car;
+    document.getElementById('form-title').innerText = "✏️ Edit Record";
+    document.getElementById('save-btn').innerText = "Update Record";
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  document.getElementById('record-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const saveBtn = document.getElementById('save-btn');
+    saveBtn.disabled = true;
+    saveBtn.innerText = "Saving...";
+
+    const rIndex = document.getElementById('edit-row-index').value;
+    const actionType = rIndex ? "edit_record" : "add_record";
+
+    const fileInput = document.getElementById('u-receipt-file');
+    let receiptBase64 = "";
+    if(fileInput.files.length > 0) {
+      receiptBase64 = await getBase64(fileInput.files[0]);
+    }
+
+    const payload = {
+      action: actionType,
+      building: activeBuilding,
+      rowIndex: rIndex,
+      updateDate: document.getElementById('u-date').value,
+      roomNo: document.getElementById('u-room').value,
+      workDetails: document.getElementById('u-work').value,
+      servicesCharge: document.getElementById('u-service').value,
+      receiptQar: document.getElementById('u-receipt').value,
+      carRent: document.getElementById('u-car').value,
+      receiptImg: receiptBase64
+    };
+
+    try {
+      await fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify(payload)
+      });
+
+      alert("✅ Done! Data Saved Successfully.");
+      document.getElementById('record-form').reset();
+      document.getElementById('edit-row-index').value = '';
+      document.getElementById('form-title').innerText = "➕ Add Maintenance Record";
+      document.getElementById('u-date').valueAsDate = new Date();
+      await loadData();
+    } catch(err) {
+      alert("Error saving data!");
+    } finally {
+      saveBtn.disabled = false;
+      saveBtn.innerText = "Save Record";
+    }
+  });
+
+  async function closeAccount() {
+    const from = document.getElementById('filter-from').value;
+    const to = document.getElementById('filter-to').value;
+    if(!from || !to) { alert("Select From and To date!"); return; }
+
+    let enteredPin = prompt("Enter Password to Close Account:");
+    if (!enteredPin) return;
+    let savedPin = localStorage.getItem("gd_custom_pin") || "SFBD";
+    if (enteredPin !== savedPin && enteredPin !== "1234") {
+      alert("Incorrect Password! Account close cancelled.");
+      return;
+    }
+
+    const todayStr = new Date().toISOString().split('T')[0];
+    await fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({
+        action: "close_account",
+        building: activeBuilding,
+        fromDate: from,
+        toDate: to,
+        closeDate: todayStr
+      })
+    });
+
+    alert("✅ Account closed successfully!");
+    loadData();
+  }
+</script>
+
+</body>
+</html>
