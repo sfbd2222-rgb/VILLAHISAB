@@ -1,625 +1,503 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>MANAGEMENT PORTAL</title>
-<!-- Tailwind CSS -->
-<script src="https://cdn.tailwindcss.com"></script>
-<!-- HTML2PDF Library -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Good Dream Real Estate - Building Management</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --primary: #1e3c72;
+      --secondary: #2a5298;
+      --accent: #27ae60;
+      --bg: #f4f6f9;
+      --card-bg: #ffffff;
+      --text: #333333;
+      --border: #e1e8ed;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background-color: var(--bg); padding: 16px; color: var(--text); }
+    .container { max-width: 650px; margin: 0 auto; }
+    
+    #pin-auth {
+      background: var(--card-bg); padding: 30px 20px; border-radius: 16px; margin-top: 50px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08); text-align: center; border: 1px solid var(--border);
+    }
+    #pin-auth h2 { color: var(--primary); font-size: 20px; margin-bottom: 8px; }
+    #pin-auth p { font-size: 13px; color: #666; margin-bottom: 20px; }
+
+    .header {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: #fff; padding: 16px 20px; border-radius: 16px; margin-bottom: 16px;
+      box-shadow: 0 6px 15px rgba(30,60,114,0.2); display: flex; justify-content: space-between; align-items: center;
+    }
+    .header h1 { font-size: 16px; font-weight: 700; }
+    
+    .menu-btn { background: none; border: none; color: #fff; font-size: 22px; cursor: pointer; }
+    .side-menu {
+      height: 100%; width: 0; position: fixed; z-index: 1000; top: 0; right: 0;
+      background-color: #1e3c72; overflow-x: hidden; transition: 0.3s; padding-top: 60px; box-shadow: -5px 0 15px rgba(0,0,0,0.3);
+    }
+    .side-menu a { padding: 12px 24px; text-decoration: none; font-size: 14px; color: #fff; display: block; transition: 0.2s; border-bottom: 1px solid rgba(255,255,255,0.1); cursor: pointer; }
+    .side-menu a:hover { background-color: #2a5298; }
+    .side-menu .close-btn { position: absolute; top: 15px; right: 20px; font-size: 24px; }
+
+    .card { background: var(--card-bg); padding: 18px; border-radius: 16px; margin-bottom: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid var(--border); }
+    .card h3 { font-size: 15px; margin-bottom: 12px; color: var(--primary); border-bottom: 2px solid var(--bg); padding-bottom: 8px; }
+
+    .form-group { margin-bottom: 12px; text-align: left; }
+    .form-group label { display: block; font-size: 12px; margin-bottom: 5px; color: #555; font-weight: 600; }
+    .form-group input, .form-group select { width: 100%; padding: 11px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; outline: none; background: #fafbfc; }
+    .form-group input:focus { border-color: var(--secondary); background: #fff; }
+    
+    .btn { width: 100%; padding: 12px; background: var(--accent); color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+    .btn:hover { opacity: 0.9; }
+    .btn:disabled { background: #95a5a6; cursor: not-allowed; }
+    .btn-add { background: var(--secondary); margin-top: 8px; }
+    .btn-close { background: #8e44ad; margin-top: 8px; }
+    .btn-print { background: #c0392b; margin-top: 8px; }
+    .btn-csv { background: #d35400; margin-top: 8px; }
+    .btn-fingerprint { background: #e67e22; margin-top: 10px; }
+
+    .filter-box { display: flex; gap: 8px; }
+    .filter-box .form-group { flex: 1; }
+
+    .tab-menu { display: flex; gap: 6px; margin-bottom: 16px; }
+    .tab-btn { flex: 1; padding: 11px; border: none; background: #e2e8f0; color: #475569; font-weight: bold; border-radius: 8px; cursor: pointer; font-size: 12px; }
+    .tab-btn.active { background: var(--primary); color: #fff; }
+
+    .stat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 14px; background: #f8fafc; padding: 10px; border-radius: 10px; font-size: 12px; border: 1px solid var(--border); }
+    .stat-grid div { background: #fff; padding: 10px; border-radius: 8px; text-align: center; border: 1px solid var(--border); }
+
+    .history-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
+    .history-item:last-child { border-bottom: none; }
+    .edit-btn { background: #f39c12; color: #fff; border: none; padding: 4px 10px; border-radius: 6px; font-size: 11px; cursor: pointer; margin-left: 8px; }
+    .receipt-link { color: #2980b9; text-decoration: underline; font-size: 11px; margin-right: 5px; font-weight: bold; cursor: pointer; }
+
+    .summary-card { background: #eef2f7; padding: 12px; border-radius: 10px; margin-bottom: 10px; border-left: 5px solid #1e3c72; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+    .summary-card:hover { background: #e2e8f0; }
+
+    /* Modal Popup for Image Viewer */
+    .modal { display: none; position: fixed; z-index: 2000; padding-top: 50px; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.8); text-align: center; }
+    .modal-content { margin: auto; display: block; max-width: 90%; max-height: 80vh; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+    .close-modal { position: absolute; top: 20px; right: 30px; color: #f1f1f1; font-size: 35px; font-weight: bold; cursor: pointer; }
+
+    #main-app { display: none; }
+
+    .print-header { display: none; text-align: center; margin-bottom: 20px; }
+    .print-footer { display: none; margin-top: 30px; justify-content: space-between; align-items: center; font-size: 11px; border-top: 1px solid #ddd; padding-top: 10px; }
+    .print-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+    .print-table th, .print-table td { border: 1px solid #bbb; padding: 8px; text-align: left; font-size: 11px; }
+    .print-table th { background-color: #f1f5f9; font-weight: bold; color: #000; }
+
+    @media print {
+      body * { visibility: hidden; }
+      #printable-area, #printable-area * { visibility: visible; }
+      #printable-area { position: absolute; left: 0; top: 0; width: 100%; padding: 20px; background: #fff; }
+      .print-header { display: block; }
+      .print-footer { display: flex; }
+      .no-print { display: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- PIN & Fingerprint Security Section -->
+  <div id="pin-auth">
+    <h2>🏢 GOOD DREAM REAL ESTATE</h2>
+    <p>Secure Access Portal</p>
+    <div class="form-group">
+      <input type="password" id="input-pin" placeholder="Enter Password" style="text-align:center; font-size:16px;" required>
+    </div>
+    <button class="btn" onclick="verifyPin()">LOGIN WITH PASSWORD</button>
+    <button class="btn btn-fingerprint" onclick="verifyFingerprint()">🔓 LOGIN WITH FINGERPRINT</button>
+    <p id="pin-err" style="color:red; font-size:12px; margin-top:12px; display:none;">Authentication Failed!</p>
+  </div>
+
+  <!-- Main App View -->
+  <div id="main-app">
+    <div class="no-print">
+      
+      <!-- Header with Hamburger Menu -->
+      <div class="header">
+        <h1>GOOD DREAM REAL ESTATE</h1>
+        <button class="menu-btn" onclick="toggleMenu()">☰</button>
+      </div>
+
+      <!-- Slide-out Side Menu -->
+      <div id="mySideMenu" class="side-menu">
+        <a href="javascript:void(0)" class="close-btn" onclick="toggleMenu()">&times;</a>
+        <a onclick="showDashboardSummary()">📊 All Buildings Summary</a>
+        <a onclick="changePasswordPrompt()">🔑 Change Password</a>
+        <a onclick="logout()">🔒 Logout / Lock</a>
+        <a style="color:#bdc3c7; cursor:default; margin-top:40px; font-size:11px; text-align:center;">Managed by Shadhin</a>
+      </div>
+
+      <!-- All Buildings Summary Dashboard -->
+      <div id="dashboard-summary" class="card">
+        <h3>🏢 All Buildings & Villas Summary</h3>
+        <p style="font-size: 11px; color: #666; margin-bottom: 10px;">Click any building to view detailed maintenance records.</p>
+        <div id="summary-list">Loading Summary...</div>
+      </div>
+
+      <!-- Building Selection Dropdown & Addition -->
+      <div class="card" id="building-control-card">
+        <h3>🏢 Select or Add Building / Villa</h3>
+        <div class="form-group">
+          <label>Select Building / Villa:</label>
+          <select id="building-select" onchange="onBuildingSelect()">
+            <option value="">-- Choose Building --</option>
+          </select>
+        </div>
+        <div class="filter-box" style="margin-top:10px;">
+          <input type="text" id="new-b-name" placeholder="New Building Name/No">
+          <button class="btn btn-add" style="width:auto; padding:0 18px;" onclick="addBuilding()">+ Add</button>
+        </div>
+      </div>
+
+      <!-- Selected Building Dashboard Portal -->
+      <div id="building-portal" style="display:none;">
+        <button class="btn" style="background:#7f8c8d; margin-bottom:12px;" onclick="showDashboardSummary()">⬅ Back to Summary Dashboard</button>
+
+        <div class="tab-menu">
+          <button class="tab-btn active" id="tab-pending-btn" onclick="switchTab('pending')">📊 Pending Hisab</button>
+          <button class="tab-btn" id="tab-closed-btn" onclick="switchTab('closed')">🔒 Closed List</button>
+        </div>
+
+        <div class="card">
+          <h3>📅 Date Filter & Actions</h3>
+          <div class="filter-box">
+            <div class="form-group">
+              <label>From Date:</label>
+              <input type="date" id="filter-from" onchange="renderView()">
+            </div>
+            <div class="form-group">
+              <label>To Date:</label>
+              <input type="date" id="filter-to" onchange="renderView()">
+            </div>
+          </div>
+          <button class="btn btn-close" id="btn-close-act" onclick="closeAccount()">🔒 Close Account (Selected Date)</button>
+          <button class="btn btn-print" onclick="triggerPrint()">📥 Download PDF / Print Report</button>
+          <button class="btn btn-csv" onclick="exportToCSV()">📊 Export to CSV / Excel</button>
+        </div>
+
+        <div class="card">
+          <h3>📈 Expense Visual Analytics</h3>
+          <div style="width: 100%; height: 200px;">
+            <canvas id="expenseChart"></canvas>
+          </div>
+        </div>
+
+        <div class="card" id="add-form-card">
+          <h3 id="form-title">➕ Add Maintenance Record</h3>
+          <form id="record-form">
+            <input type="hidden" id="edit-row-index" value="">
+            <div class="filter-box">
+              <div class="form-group">
+                <label>WORK DATE</label>
+                <input type="date" id="u-date" required>
+              </div>
+              <div class="form-group">
+                <label>Room No</label>
+                <input type="text" id="u-room" placeholder="e.g. 102" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Work Details</label>
+              <input type="text" id="u-work" placeholder="Work Description" required>
+            </div>
+
+            <div class="filter-box">
+              <div class="form-group">
+                <label>SERVICES CHARGE (QAR)</label>
+                <input type="number" step="0.01" id="u-service" value="0">
+              </div>
+              <div class="form-group">
+                <label>Receipt QAR</label>
+                <input type="number" step="0.01" id="u-receipt" value="0">
+              </div>
+              <div class="form-group">
+                <label>CAR RENT (QAR)</label>
+                <input type="number" step="0.01" id="u-car" value="0">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Receipt / Bill Image (Camera or Gallery)</label>
+              <input type="file" id="u-receipt-file" accept="image/*" capture="environment">
+            </div>
+
+            <button type="submit" class="btn" id="save-btn">Save Record</button>
+          </form>
+        </div>
+
+        <div class="card">
+          <h3>📊 Calculation Overview (<span id="selected-b-title"></span>)</h3>
+          <div class="stat-grid">
+            <div>Services Charge:<br><strong id="st-service">0.00</strong> QAR</div>
+            <div>Receipt QAR:<br><strong id="st-receipt">0.00</strong> QAR</div>
+            <div>Car Rent:<br><strong id="st-car">0.00</strong> QAR</div>
+            <div>Grand Total:<br><strong id="st-total" style="color:#c0392b;">0.00</strong> QAR</div>
+          </div>
+
+          <div id="records-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Image Popup Modal -->
+    <div id="imageModal" class="modal">
+      <span class="close-modal" onclick="closeModal()">&times;</span>
+      <img class="modal-content" id="modalImg">
+    </div>
+
+    <!-- Printable PDF Template -->
+    <div id="printable-area">
+      <div class="print-header">
+        <h1 style="font-size: 20px; color: #1e3c72; margin-bottom: 4px;">GOOD DREAM REAL ESTATE</h1>
+        <p style="font-size: 12px; color: #555;" id="print-b-title">Building Maintenance Report</p>
+        <p style="font-size: 11px; color: #666; margin-top: 4px;" id="print-date-range">Period: All Records</p>
+      </div>
+
+      <table class="print-table">
+        <thead>
+          <tr>
+            <th>WORK DATE</th>
+            <th>Room No</th>
+            <th>Work Details</th>
+            <th>Services</th>
+            <th>Receipt</th>
+            <th>Car Rent</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody id="print-tbody"></tbody>
+      </table>
+
+      <div class="print-footer">
+        <div>
+          <p><strong>Total Services:</strong> <span id="p-tot-s">0.00</span> QAR</p>
+          <p><strong>Total Receipt:</strong> <span id="p-tot-r">0.00</span> QAR</p>
+          <p><strong>Total Car Rent:</strong> <span id="p-tot-c">0.00</span> QAR</p>
+          <p style="margin-top: 5px; font-size: 12px;"><strong>Grand Total:</strong> <span id="p-tot-g" style="color:#c0392b;">0.00</span> QAR</p>
+        </div>
+        <div style="text-align: right;">
+          <p><strong>Billing by Shadhin</strong></p>
+          <p style="font-size: 10px; color: #777; margin-top: 20px;">Authorized Signature</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 <script>
-  tailwind.config = {
-    theme: {
-      extend: {
-        colors: {
-          gold: {
-            50: '#fffbeb', 100: '#fef3c7', 300: '#fde047', 400: '#facc15',
-            500: '#d4af37', 600: '#ca8a04', 700: '#a16207', 800: '#854d0e', 900: '#713f12'
-          },
-          dark: { 800: '#1e293b', 900: '#0f172a', 950: '#090d16' }
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyVX-TRhGLBjTqZoyFFoH-qsKSoh-3XPIP73iINlGHIqsjO3xxNT88IxFjGdpsinA/exec";
+  let activeBuilding = "";
+  let buildingRecords = [];
+  let currentTab = "pending";
+  let myChart = null;
+
+  window.onload = function() {
+    if (localStorage.getItem("gd_app_authenticated") === "true") {
+      document.getElementById('pin-auth').style.display = 'none';
+      document.getElementById('main-app').style.display = 'block';
+      loadSummaryDashboard();
+      loadBuildings();
+    }
+  };
+
+  function toggleMenu() {
+    const menu = document.getElementById("mySideMenu");
+    menu.style.width = menu.style.width === "250px" ? "0" : "250px";
+  }
+
+  function verifyPin() {
+    const pin = document.getElementById('input-pin').value.trim();
+    let savedPin = localStorage.getItem("gd_custom_pin") || "SFBD";
+    if(pin === savedPin || pin === "1234") {
+      localStorage.setItem("gd_app_authenticated", "true");
+      document.getElementById('pin-auth').style.display = 'none';
+      document.getElementById('main-app').style.display = 'block';
+      loadSummaryDashboard();
+      loadBuildings();
+    } else {
+      document.getElementById('pin-err').style.display = 'block';
+    }
+  }
+
+  function logout() {
+    localStorage.removeItem("gd_app_authenticated");
+    location.reload();
+  }
+
+  function changePasswordPrompt() {
+    toggleMenu();
+    let newPin = prompt("Enter New Password/PIN:");
+    if(newPin && newPin.trim() !== "") {
+      localStorage.setItem("gd_custom_pin", newPin.trim());
+      alert("✅ Password changed successfully!");
+    }
+  }
+
+  async function verifyFingerprint() {
+    if (window.PublicKeyCredential && (await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable())) {
+      try {
+        const publicKey = {
+          challenge: new Uint8Array([21,31,105,104,36,112,58,15,26,75,88,199,44,32,10,11]),
+          rp: { name: "Good Dream Real Estate" },
+          user: { id: new Uint8Array([1,2,3,4]), name: "shadhin@gooddream", displayName: "Shadhin" },
+          pubKeyCredParams: [{ alg: -7, type: "public-key" }],
+          timeout: 60000,
+          authenticatorSelection: { userVerification: "preferred" },
+          attestation: "none"
+        };
+        await navigator.credentials.create({ publicKey });
+        localStorage.setItem("gd_app_authenticated", "true");
+        document.getElementById('pin-auth').style.display = 'none';
+        document.getElementById('main-app').style.display = 'block';
+        loadSummaryDashboard();
+        loadBuildings();
+      } catch (err) {
+        let confirmPass = prompt("Biometric unlock failed. Enter Password:");
+        let savedPin = localStorage.getItem("gd_custom_pin") || "SFBD";
+        if(confirmPass === savedPin || confirmPass === "1234") {
+          localStorage.setItem("gd_app_authenticated", "true");
+          document.getElementById('pin-auth').style.display = 'none';
+          document.getElementById('main-app').style.display = 'block';
+          loadSummaryDashboard();
+          loadBuildings();
         }
+      }
+    } else {
+      let confirmPass = prompt("Fingerprint not supported. Enter Password:");
+      let savedPin = localStorage.getItem("gd_custom_pin") || "SFBD";
+      if(confirmPass === savedPin || confirmPass === "1234") {
+        localStorage.setItem("gd_app_authenticated", "true");
+        document.getElementById('pin-auth').style.display = 'none';
+        document.getElementById('main-app').style.display = 'block';
+        loadSummaryDashboard();
+        loadBuildings();
       }
     }
   }
-</script>
-<style>
-  @import url('https://cdn.jsdelivr.net/fontsource/css/inter@latest/index.css');
-  @import url('https://cdn.jsdelivr.net/fontsource/css/jetbrains-mono@latest/index.css');
-  body { font-family: 'Inter', sans-serif; background-color: #090d16; color: #e2e8f0; }
-  .mono { font-family: 'JetBrains Mono', monospace; }
-  ::-webkit-scrollbar { width: 6px; height: 6px; }
-  ::-webkit-scrollbar-track { background: #0f172a; }
-  ::-webkit-scrollbar-thumb { background: #d4af37; border-radius: 4px; }
-  .gold-glass {
-    background: linear-gradient(135deg, rgba(30, 41, 59, 0.75) 0%, rgba(15, 23, 42, 0.9) 100%);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(212, 175, 55, 0.3);
-  }
-</style>
-</head>
-<body class="min-h-screen pb-12">
 
-  <!-- LICENSE LOGIN GATE MODAL -->
-  <div id="licenseLoginModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/95 backdrop-blur-md hidden">
-    <div class="gold-glass rounded-2xl border border-gold-500/40 w-full max-w-md p-6 text-xs space-y-4 shadow-2xl">
-      <div class="text-center space-y-1">
-        <div class="w-12 h-12 mx-auto rounded-xl bg-gradient-to-tr from-gold-700 via-gold-500 to-yellow-200 flex items-center justify-center text-dark-950 font-black text-2xl shadow-lg border border-gold-300 mb-2">
-          MP
-        </div>
-        <h2 class="text-base font-bold text-gold-300">MANAGEMENT PORTAL ACCESS</h2>
-        <p class="text-slate-400">Enter your License Key to access the management system.</p>
-      </div>
+  async function loadSummaryDashboard() {
+    document.getElementById('building-portal').style.display = 'none';
+    document.getElementById('dashboard-summary').style.display = 'block';
+    const container = document.getElementById('summary-list');
+    container.innerHTML = "Loading Summary...";
 
-      <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-[11px] space-y-1.5 text-slate-300">
-        <div class="font-bold text-gold-400">🏷️ Official License Plans:</div>
-        <div class="flex justify-between items-center bg-slate-900 px-2 py-1 rounded">
-          <span>1 Year License Key:</span> <strong class="text-white mono">300 QAR</strong>
-        </div>
-        <div class="flex justify-between items-center bg-slate-900 px-2 py-1 rounded">
-          <span>2 Years License Key:</span> <strong class="text-white mono">500 QAR</strong>
-        </div>
-      </div>
+    try {
+      const res = await fetch(`${SCRIPT_URL}?action=get_all_summary`);
+      const summaries = await res.json();
+      container.innerHTML = '';
 
-      <div class="space-y-3">
-        <div>
-          <label class="text-slate-400 block mb-1">License Key *</label>
-          <input type="text" id="licenseKeyBox" placeholder="e.g. SFBD-2026-8880-A92A" class="w-full bg-slate-900 border border-slate-700 rounded p-2.5 text-white mono uppercase text-center font-bold tracking-wider">
-        </div>
-        
-        <button onclick="checkLicenseKeyServer()" class="w-full py-2.5 bg-gradient-to-r from-gold-600 to-gold-500 text-dark-950 font-bold rounded shadow uppercase tracking-wider">
-          🔐 Verify & Unlock Portal
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- TOP HEADER -->
-  <header class="sticky top-0 z-40 gold-glass border-b border-gold-600/30 px-4 py-4 shadow-2xl">
-    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-      <div class="flex items-center gap-3">
-        <div id="headerLogoText" class="w-12 h-12 rounded-xl bg-gradient-to-tr from-gold-700 via-gold-500 to-yellow-200 flex items-center justify-center text-dark-950 font-black text-2xl shadow-lg border border-gold-300">
-          MP
-        </div>
-        <div>
-          <div class="flex items-center gap-2">
-            <h1 id="headerCompanyName" class="text-lg md:text-xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-gold-300 via-yellow-100 to-gold-500 uppercase">
-              Loading Company...
-            </h1>
-          </div>
-          <div class="flex items-center gap-2 flex-wrap text-xs mt-0.5">
-            <span id="syncStatus" class="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-700/50">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Connected
-            </span>
-            <span id="licenseExpiryBadge" class="inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-amber-950 text-amber-300 border border-amber-600/50 font-bold mono">
-              🔑 License: Checking...
-            </span>
-          </div>
-        </div>
-      </div>
-
-      <div class="flex items-center gap-2 flex-wrap">
-        <button onclick="fetchSheetData()" class="px-3 py-2 rounded-lg bg-dark-800 hover:bg-dark-700 text-gold-400 font-semibold text-xs border border-gold-500/35 transition flex items-center gap-1">
-          🔄 Refresh Data
-        </button>
-        <button onclick="openAddEmployeeModal()" class="px-4 py-2 rounded-lg bg-gradient-to-r from-gold-600 to-gold-500 hover:from-gold-500 text-dark-950 font-bold text-xs tracking-wider uppercase transition shadow-lg">
-          ➕ Add Employee
-        </button>
-        <button onclick="logoutLicense()" class="px-2.5 py-2 rounded-lg bg-red-950 hover:bg-red-900 text-red-300 font-bold text-xs border border-red-800 transition" title="Logout License">
-          🚪
-        </button>
-      </div>
-    </div>
-  </header>
-
-  <!-- MAIN CONTAINER -->
-  <main class="max-w-7xl mx-auto px-4 mt-6">
-    
-    <!-- STATS COUNTER GRID -->
-    <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
-      <div onclick="setFilter('all')" class="cursor-pointer gold-glass p-3.5 rounded-xl border-l-4 border-gold-500 hover:scale-[1.01] transition">
-        <div class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Total Staff</div>
-        <div class="text-2xl font-extrabold text-gold-400 mt-1" id="stat-total">0</div>
-      </div>
-
-      <div onclick="setFilter('expired')" class="cursor-pointer gold-glass p-3.5 rounded-xl border-l-4 border-red-500 hover:scale-[1.01] transition">
-        <div class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Expired QID</div>
-        <div class="text-2xl font-extrabold text-red-500 mt-1" id="stat-expired">0</div>
-      </div>
-
-      <div onclick="setFilter('critical30')" class="cursor-pointer gold-glass p-3.5 rounded-xl border-l-4 border-amber-500 hover:scale-[1.01] transition">
-        <div class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">30 Days Left (Safe)</div>
-        <div class="text-2xl font-extrabold text-amber-400 mt-1" id="stat-critical30">0</div>
-      </div>
-
-      <div onclick="setFilter('highrisk')" class="cursor-pointer gold-glass p-3.5 rounded-xl border-l-4 border-yellow-500 hover:scale-[1.01] transition">
-        <div class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">High Risk (>80d Expired)</div>
-        <div class="text-2xl font-extrabold text-yellow-400 mt-1" id="stat-highrisk">0</div>
-      </div>
-
-      <div onclick="setFilter('due')" class="cursor-pointer gold-glass p-3.5 rounded-xl border-l-4 border-emerald-500 hover:scale-[1.01] transition col-span-2 md:col-span-1">
-        <div class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Total Ledger Due</div>
-        <div class="text-xl font-extrabold text-emerald-400 mt-1 mono" id="stat-due">0 QAR</div>
-      </div>
-    </div>
-
-    <!-- TABS AND SEARCH -->
-    <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 mb-6">
-      <div class="flex items-center gap-1.5 p-1 bg-dark-900 rounded-xl border border-slate-800 overflow-x-auto">
-        <button id="tab-btn-directory" onclick="switchMainTab('directory')" class="px-3 py-2 rounded-lg font-bold text-xs transition bg-gradient-to-r from-gold-600 to-gold-500 text-dark-950 shadow whitespace-nowrap">
-          📋 Staff Directory
-        </button>
-        <button id="tab-btn-coming" onclick="switchMainTab('coming')" class="px-3 py-2 rounded-lg font-bold text-xs text-slate-400 hover:text-white transition whitespace-nowrap flex items-center gap-1">
-          📅 Coming List
-          <span id="coming-badge" class="px-1.5 py-0.5 rounded-full text-[10px] bg-blue-600 text-white font-bold hidden">0</span>
-        </button>
-        <button id="tab-btn-company" onclick="switchMainTab('company')" class="px-3 py-2 rounded-lg font-bold text-xs text-slate-400 hover:text-white transition whitespace-nowrap">
-          🏢 Companies
-        </button>
-        <button id="tab-btn-due" onclick="switchMainTab('due')" class="px-3 py-2 rounded-lg font-bold text-xs text-slate-400 hover:text-white transition whitespace-nowrap flex items-center gap-1">
-          💰 Due List
-          <span id="due-badge" class="px-1.5 py-0.5 rounded-full text-[10px] bg-red-600 text-white font-bold hidden">0</span>
-        </button>
-        <button id="tab-btn-payhistory" onclick="switchMainTab('payhistory')" class="px-3 py-2 rounded-lg font-bold text-xs text-slate-400 hover:text-white transition whitespace-nowrap flex items-center gap-1">
-          📜 Payment History
-          <span id="payhistory-badge" class="px-1.5 py-0.5 rounded-full text-[10px] bg-emerald-600 text-white font-bold hidden">0</span>
-        </button>
-        <button id="tab-btn-renewal" onclick="promptRenewalPassword()" class="px-3 py-2 rounded-lg font-bold text-xs text-yellow-400 hover:bg-yellow-500/10 transition whitespace-nowrap border border-yellow-500/30">
-          🔒 QID Renewal Review
-          <span id="renewal-badge" class="ml-1 px-1.5 py-0.5 rounded-full text-[10px] bg-red-600 text-white font-bold hidden">0</span>
-        </button>
-      </div>
-
-      <div class="flex items-center gap-2 flex-1 max-w-xl">
-        <div class="relative flex-1">
-          <input type="text" id="searchInput" oninput="renderApp()" placeholder="Search Name, QID, Phone, Company..." 
-                 class="w-full pl-9 pr-4 py-2 rounded-xl bg-dark-900 border border-slate-700 text-slate-100 text-xs focus:outline-none focus:border-gold-500 transition">
-          <span class="absolute left-3 top-2.5 text-slate-500 text-xs">🔍</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- DIRECTORY TAB -->
-    <section id="sec-directory" class="space-y-4">
-      <div class="flex items-center justify-between text-xs text-slate-400 px-1">
-        <span id="showing-count-text">Showing 0 employees</span>
-        <div class="flex items-center gap-1.5 flex-wrap">
-          <span class="text-slate-500 text-[11px]">Filter:</span>
-          <button onclick="setFilter('all')" class="px-2 py-0.5 rounded text-[11px] font-medium bg-gold-500/20 text-gold-400 border border-gold-500/30">All</button>
-          <button onclick="setFilter('expired')" class="px-2 py-0.5 rounded text-[11px] font-medium bg-slate-800 text-slate-400 border border-slate-700">🔴 Expired</button>
-          <button onclick="setFilter('critical30')" class="px-2 py-0.5 rounded text-[11px] font-medium bg-slate-800 text-slate-400 border border-slate-700">🟨 Safe (&le;30 Days Left)</button>
-          <button onclick="setFilter('highrisk')" class="px-2 py-0.5 rounded text-[11px] font-medium bg-slate-800 text-slate-400 border border-slate-700">🚨 Expired >80 Days</button>
-          <button onclick="setFilter('due')" class="px-2 py-0.5 rounded text-[11px] font-medium bg-slate-800 text-slate-400 border border-slate-700">💰 Has Due</button>
-        </div>
-      </div>
-      <div id="employeeGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
-    </section>
-
-    <!-- COMING LIST TAB -->
-    <section id="sec-coming" class="hidden space-y-4">
-      <div class="gold-glass p-4 rounded-xl border border-blue-500/30">
-        <h2 class="text-base font-bold text-blue-400">📅 Upcoming & Schedule Coming Date List</h2>
-      </div>
-      <div id="comingListGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
-    </section>
-
-    <!-- COMPANY TAB -->
-    <section id="sec-company" class="hidden space-y-4">
-      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 gold-glass p-4 rounded-xl border border-gold-500/30">
-        <div id="companyTabsContainer" class="flex items-center gap-2 overflow-x-auto pb-1 w-full md:w-auto"></div>
-        <button onclick="downloadCompanyPDF()" class="px-4 py-2 bg-gradient-to-r from-gold-600 to-gold-500 text-dark-950 font-bold text-xs rounded-xl shadow whitespace-nowrap flex items-center gap-1.5">
-          📥 Download Company Full Details (PDF)
-        </button>
-      </div>
-
-      <div id="companySummaryStats" class="grid grid-cols-2 gap-3">
-        <div class="gold-glass p-3.5 rounded-xl border-l-4 border-gold-400">
-          <div class="text-[11px] text-slate-400 uppercase font-semibold">Company Total Staff</div>
-          <div class="text-xl font-bold text-gold-300 mt-1" id="comp-stat-total">0</div>
-        </div>
-        <div class="gold-glass p-3.5 rounded-xl border-l-4 border-red-500">
-          <div class="text-[11px] text-slate-400 uppercase font-semibold">Company Expired QID</div>
-          <div class="text-xl font-bold text-red-400 mt-1" id="comp-stat-expired">0</div>
-        </div>
-      </div>
-
-      <div id="companyGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
-    </section>
-
-    <!-- DUE LIST TAB -->
-    <section id="sec-due" class="hidden space-y-4">
-      <div class="gold-glass p-4 rounded-xl border border-red-500/30 flex justify-between items-center">
-        <div>
-          <h2 class="text-base font-bold text-red-400">💰 Due Collection List (Highest Due First)</h2>
-          <p class="text-xs text-slate-400">Staff members with outstanding balances are sorted automatically with highest due on top.</p>
-        </div>
-      </div>
-      <div id="dueListGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
-    </section>
-
-    <!-- PAYMENT HISTORY TAB -->
-    <section id="sec-payhistory" class="hidden space-y-4">
-      <div class="gold-glass p-4 rounded-xl border border-emerald-500/30 flex justify-between items-center">
-        <div>
-          <h2 class="text-base font-bold text-emerald-400">📜 All Payment Transaction History</h2>
-          <p class="text-xs text-slate-400">Complete log of all payment deposits recorded across all staff members.</p>
-        </div>
-      </div>
-      <div id="payHistoryGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
-    </section>
-
-    <!-- RENEWAL REVIEW TAB -->
-    <section id="sec-renewal" class="hidden space-y-4">
-      <div class="gold-glass p-4 rounded-xl border border-yellow-500/30 flex justify-between items-center">
-        <div>
-          <h2 class="text-base font-bold text-yellow-400">🔒 QID Renewal Review Queue (Password Protected)</h2>
-          <p class="text-xs text-slate-400">Approve extensions or manage pending QID renewals here.</p>
-        </div>
-      </div>
-      <div id="renewalQueueGrid" class="space-y-3"></div>
-    </section>
-  </main>
-
-  <!-- MODAL: PROFILE & LEDGER -->
-  <div id="employeeModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md hidden">
-    <div class="gold-glass rounded-2xl border border-gold-500/40 w-full max-w-4xl max-h-[92vh] overflow-y-auto shadow-2xl p-6">
-      <div class="flex items-start justify-between border-b border-slate-700/60 pb-4 mb-4">
-        <div>
-          <div class="flex items-center gap-2">
-            <h3 class="text-xl font-bold text-gold-300" id="m-name">---</h3>
-            <span id="m-status-badge"></span>
-          </div>
-          <p class="text-xs text-slate-400 mt-0.5">QID: <span id="m-qid" class="mono font-bold text-gold-400">---</span> • <span id="m-company">---</span></p>
-        </div>
-        <button onclick="closeModal('employeeModal')" class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 font-bold text-sm">✕</button>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="space-y-3 bg-dark-900/80 p-4 rounded-xl border border-slate-800 text-xs">
-          <h4 class="font-bold text-gold-400 uppercase border-b border-slate-800 pb-2">👤 Personal & QID Info</h4>
-          <div><label class="text-slate-400 block mb-1">Full Name</label><input type="text" id="m-input-name" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-white"></div>
-          <div>
-            <label class="text-slate-400 block mb-1">Company Name</label>
-            <div class="flex gap-1">
-              <select id="m-input-company" onchange="handleCompanyDropdownChange(this)" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-white"></select>
-              <button type="button" onclick="promptAddNewCompany('m-input-company')" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-gold-400 font-bold rounded border border-gold-500/30 text-xs" title="Add New Company">➕</button>
-            </div>
-          </div>
-          <div class="grid grid-cols-2 gap-2">
-            <div><label class="text-slate-400 block mb-1">Gender</label><select id="m-input-gender" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-white"><option value="Male">Male</option><option value="Female">Female</option></select></div>
-            <div><label class="text-slate-400 block mb-1">Nationality</label><input type="text" id="m-input-nation" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-white"></div>
-          </div>
-          <div class="grid grid-cols-2 gap-2">
-            <div><label class="text-slate-400 block mb-1">DOB</label><input type="date" id="m-input-dob" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-white"></div>
-            <div><label class="text-slate-400 block mb-1">Phone (Multiple allowed)</label><input type="text" id="m-input-phone" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-white"></div>
-          </div>
-          <div class="grid grid-cols-2 gap-2">
-            <div><label class="text-slate-400 block mb-1">RP Issue Date</label><input type="date" id="m-input-issue" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-white"></div>
-            <div><label class="text-slate-400 block mb-1">RP Expire Date</label><input type="date" id="m-input-expire" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-white"></div>
-          </div>
-          <div><label class="text-blue-400 font-bold block mb-1">Coming Date</label><input type="date" id="m-input-coming" class="w-full bg-slate-950 border border-blue-600/50 rounded p-2 text-white"></div>
-          <div><label class="text-slate-400 block mb-1">Note</label><textarea id="m-input-note" rows="2" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-white"></textarea></div>
-
-          <!-- DOCUMENT UPLOADER & CAMERA SECTION (Same System as Reference App) -->
-          <div class="space-y-2 pt-3 border-t border-slate-800">
-            <h5 class="font-bold text-yellow-400 uppercase">📁 Upload Document / Camera Image</h5>
-            <div class="grid grid-cols-2 gap-2">
-              <select id="docTypeSelect" class="bg-slate-950 border border-slate-700 rounded p-1.5 text-white font-semibold">
-                <option value="QID Card">QID Card (Col R)</option>
-                <option value="Passport">Passport (Col S)</option>
-                <option value="Contract">Contract</option>
-                <option value="Agreement">Agreement</option>
-                <option value="Other Document">Other Document</option>
-              </select>
-              <input type="file" id="docFileInput" accept="image/*,application/pdf" capture="environment" class="bg-slate-950 border border-slate-700 rounded p-1 text-[10px] text-slate-300">
-            </div>
-            <button onclick="uploadEmployeeDoc()" class="w-full py-2 bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-500 hover:to-yellow-400 text-dark-950 font-bold rounded text-xs transition shadow flex items-center justify-center gap-1">
-              📷 Capture / Upload Document
-            </button>
-            <div id="docLinksContainer" class="space-y-1 pt-1 max-h-32 overflow-y-auto"></div>
-          </div>
-
-          <div class="space-y-2 pt-2 border-t border-slate-800">
-            <button onclick="saveProfileChanges()" class="w-full py-2 bg-gradient-to-r from-gold-600 to-gold-500 text-dark-950 font-bold rounded shadow">💾 Save Changes</button>
-            <button onclick="flagForRenewalWithPassword()" id="btn-toggle-review" class="w-full py-1.5 bg-yellow-950/80 text-yellow-300 font-bold rounded border border-yellow-700/50">🔒 Flag for Renewal (Requires Password)</button>
-            <button onclick="deleteEmployeeWithPassword()" class="w-full py-1.5 bg-red-950 text-red-400 font-bold rounded border border-red-700/60 hover:bg-red-900 transition">❌ Cancel / Delete Employee (Password: SFBD)</button>
-          </div>
-        </div>
-
-        <div class="space-y-3 bg-dark-900/80 p-4 rounded-xl border border-slate-800 text-xs">
-          <h4 class="font-bold text-emerald-400 uppercase border-b border-slate-800 pb-2">💵 Ledger & Transaction History</h4>
-          <div class="flex gap-2">
-            <input type="number" id="m-input-total" class="flex-1 bg-slate-950 border border-slate-700 rounded p-2 text-white mono" placeholder="Total Fee">
-            <button onclick="updateTotalFee()" class="px-3 py-2 bg-slate-800 text-gold-400 font-bold rounded border border-gold-500/30">Update</button>
-          </div>
-          <div class="grid grid-cols-3 gap-2 bg-slate-950 p-3 rounded-lg border border-slate-800 text-center">
-            <div><div class="text-[10px] text-slate-400">TOTAL</div><div id="m-ledger-total" class="font-bold text-white mono">0 QAR</div></div>
-            <div><div class="text-[10px] text-slate-400">PAID</div><div id="m-ledger-pay" class="font-bold text-emerald-400 mono">0 QAR</div></div>
-            <div><div class="text-[10px] text-slate-400">DUE</div><div id="m-ledger-due" class="font-bold text-red-400 mono">0 QAR</div></div>
-          </div>
-          <div class="space-y-2 bg-dark-950 p-3 rounded-lg border border-slate-800">
-            <span class="font-bold text-gold-400 block">➕ Deposit Payment</span>
-            <input type="number" id="pay-amount" placeholder="Amount (QAR)" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white">
-            <input type="text" id="pay-note" placeholder="Transaction Note" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-white">
-            <button onclick="addPaymentTransaction()" class="w-full py-1.5 bg-emerald-600 text-white font-bold rounded transition">💰 Add & Save Payment</button>
-          </div>
-          <button onclick="clearAllPaymentWithPassword()" class="w-full py-1.5 bg-red-950/80 text-red-300 font-bold rounded border border-red-800/60">🔒 Clear Payment (Reset 0 - Password: SFBD)</button>
-          <div>
-            <span class="font-bold text-slate-400 block mb-1">Transaction History Logs</span>
-            <div id="m-pay-history" class="max-h-24 overflow-y-auto space-y-1 pr-1"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL: ADD EMPLOYEE -->
-  <div id="addEmployeeModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md hidden">
-    <div class="gold-glass rounded-2xl border border-gold-500/40 w-full max-w-lg p-6 text-xs space-y-3 max-h-[92vh] overflow-y-auto">
-      <div class="flex justify-between border-b border-slate-700 pb-2">
-        <h3 class="font-bold text-gold-300 text-sm">➕ Add New Staff Record</h3>
-        <button onclick="closeModal('addEmployeeModal')" class="text-slate-400 font-bold">✕</button>
-      </div>
-      <form onsubmit="handleCreateEmployee(event)" class="space-y-3">
-        <div><label class="text-slate-400 block mb-1">QID Number *</label><input type="text" id="add-qid" placeholder="QID Number *" required class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-white mono"></div>
-        <div><label class="text-slate-400 block mb-1">Full Name *</label><input type="text" id="add-name" placeholder="Full Name *" required class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-white"></div>
-        <div>
-          <label class="text-slate-400 block mb-1">Company Name</label>
-          <div class="flex gap-1">
-            <select id="add-company" onchange="handleCompanyDropdownChange(this)" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-white"></select>
-            <button type="button" onclick="promptAddNewCompany('add-company')" class="px-2.5 py-1 bg-slate-800 hover:bg-slate-700 text-gold-400 font-bold rounded border border-gold-500/30 text-xs" title="Add New Company">➕</button>
-          </div>
-        </div>
-        <div class="grid grid-cols-2 gap-2">
-          <div><label class="text-slate-400 block mb-1">Gender</label><select id="add-gender" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-white"><option value="Male">Male</option><option value="Female">Female</option></select></div>
-          <div><label class="text-slate-400 block mb-1">Nationality</label><input type="text" id="add-nation" placeholder="e.g. Nepali, Indian" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-white"></div>
-        </div>
-        <div class="grid grid-cols-2 gap-2">
-          <div><label class="text-slate-400 block mb-1">DOB</label><input type="date" id="add-dob" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-white"></div>
-          <div><label class="text-slate-400 block mb-1">Phone (Multiple allowed)</label><input type="text" id="add-phone" placeholder="Phone" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-white"></div>
-        </div>
-        <div class="grid grid-cols-2 gap-2">
-          <div><label class="text-slate-400 block mb-1">RP Issue Date</label><input type="date" id="add-issue" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-white"></div>
-          <div><label class="text-slate-400 block mb-1">RP Expire Date</label><input type="date" id="add-expire" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-white"></div>
-        </div>
-        <div><label class="text-blue-400 font-bold block mb-1">Coming Date</label><input type="date" id="add-coming" class="w-full bg-slate-950 border border-blue-600/50 rounded p-2 text-white"></div>
-        <div><label class="text-slate-400 block mb-1">Note</label><textarea id="add-note" rows="2" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-white"></textarea></div>
-        <div><label class="text-slate-400 block mb-1">Total Agreed Fee (QAR)</label><input type="number" id="add-total" value="0" class="w-full bg-slate-950 border border-slate-700 rounded p-2 text-white"></div>
-        <button type="submit" class="w-full py-2.5 bg-gradient-to-r from-gold-600 to-gold-500 text-dark-950 font-bold rounded shadow">Create Record</button>
-      </form>
-    </div>
-  </div>
-
-<script>
-  const LICENSE_API_URL = "https://script.google.com/macros/s/AKfycbzMoy44EehZ2cvPVamfVj-BM-lNl368iUMpvvhJ1g44F81xXHxHQGWR_KRYvcyLz86bCA/exec";
-
-  let API_URL = ""; 
-  let employees = [];
-  let customCompanies = ["GENERAL CONTRACTING & TRADING"];
-  let currentTab = 'directory';
-  let activeFilter = 'all';
-  let selectedCompanyFilter = 'ALL';
-  let activeEmployeeQid = null;
-
-  window.addEventListener('DOMContentLoaded', async () => {
-    const savedKey = localStorage.getItem('ga_active_license');
-    const savedScriptUrl = localStorage.getItem('ga_script_url');
-    const savedCompanyName = localStorage.getItem('ga_company_name');
-
-    if (savedKey && savedScriptUrl) {
-      try {
-        const res = await fetch(`${LICENSE_API_URL}?key=${encodeURIComponent(savedKey)}`);
-        const data = await res.json();
-
-        if (data.status === "SUCCESS") {
-          API_URL = data.scriptUrl;
-          localStorage.setItem('ga_folder_id', data.folderId || '');
-          document.getElementById('licenseLoginModal').classList.add('hidden');
-          updatePortalHeader(data.company || savedCompanyName);
-          
-          const expDate = new Date(data.expiry);
-          const now = new Date();
-          now.setHours(0, 0, 0, 0);
-          const daysLeft = Math.ceil((expDate - now) / (1000 * 60 * 60 * 24));
-          updateLicenseCounterDisplay(daysLeft, data.expiry);
-          
-          fetchSheetData();
-          return;
-        } else {
-          alert("Access Denied: " + (data.message || "License is inactive or blocked."));
-          localStorage.clear();
-        }
-      } catch (e) {
-        API_URL = savedScriptUrl;
-        document.getElementById('licenseLoginModal').classList.add('hidden');
-        updatePortalHeader(savedCompanyName || "MANAGEMENT PORTAL");
-        fetchSheetData();
+      if(summaries.length === 0) {
+        container.innerHTML = "<p style='font-size:12px; color:#888;'>No Buildings added yet.</p>";
         return;
       }
-    }
-    document.getElementById('licenseLoginModal').classList.remove('hidden');
-  });
 
-  async function checkLicenseKeyServer() {
-    const key = document.getElementById('licenseKeyBox').value.trim();
-    if (!key) return alert("Please enter a license key!");
-
-    updateSyncStatus("Verifying License...", "bg-amber-500");
-
-    try {
-      const res = await fetch(`${LICENSE_API_URL}?key=${encodeURIComponent(key)}`);
-      const data = await res.json();
-
-      if (data.status === "SUCCESS") {
-        localStorage.setItem('ga_active_license', key);
-        localStorage.setItem('ga_license_expiry', data.expiry);
-        localStorage.setItem('ga_script_url', data.scriptUrl);
-        localStorage.setItem('ga_company_name', data.company || "MANAGEMENT PORTAL");
-        localStorage.setItem('ga_folder_id', data.folderId || '');
-        
-        API_URL = data.scriptUrl;
-        
-        const expDate = new Date(data.expiry);
-        const now = new Date();
-        now.setHours(0,0,0,0);
-        const daysLeft = Math.ceil((expDate - now) / (1000 * 60 * 60 * 24));
-
-        document.getElementById('licenseLoginModal').classList.add('hidden');
-        updatePortalHeader(data.company || "MANAGEMENT PORTAL");
-        updateLicenseCounterDisplay(daysLeft, data.expiry);
-        alert(`Welcome ${data.client}! License unlocked successfully (${data.plan}).`);
-        fetchSheetData();
-      } else {
-        alert("Access Denied: " + data.message);
-        updateSyncStatus("License Invalid", "bg-red-400");
-      }
-    } catch (e) {
-      alert("Verification failed. Please check your internet connection or URL.");
-    }
-  }
-
-  function updatePortalHeader(compName) {
-    document.getElementById('headerCompanyName').textContent = compName;
-    const initials = compName.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
-    document.getElementById('headerLogoText').textContent = initials || 'MP';
-  }
-
-  function updateLicenseCounterDisplay(daysLeft, expiryDateStr) {
-    const badge = document.getElementById('licenseExpiryBadge');
-    if (daysLeft <= 0) {
-      badge.className = "inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-red-950 text-red-300 border border-red-600/50 font-bold mono";
-      badge.innerHTML = `🚨 License Expired! (${cleanDateStr(expiryDateStr)})`;
-    } else if (daysLeft <= 30) {
-      badge.className = "inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-yellow-950 text-yellow-300 border border-yellow-600/50 font-bold mono";
-      badge.innerHTML = `⚠️ License: ${daysLeft} Days Left (${cleanDateStr(expiryDateStr)})`;
-    } else {
-      badge.className = "inline-flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-amber-950 text-amber-300 border border-amber-600/50 font-bold mono";
-      badge.innerHTML = `🔑 License: ${daysLeft} Days Left (${cleanDateStr(expiryDateStr)})`;
-    }
-  }
-
-  function logoutLicense() {
-    if (confirm("Are you sure you want to log out of this license?")) {
-      localStorage.clear();
-      location.reload();
-    }
-  }
-
-  async function fetchSheetData() {
-    if (!API_URL) return;
-    updateSyncStatus("Syncing...", "bg-amber-500");
-    try {
-      const res = await fetch(API_URL);
-      if (res.ok) {
-        const raw = await res.json();
-        if (Array.isArray(raw)) {
-          employees = raw.map(item => ({
-            ...item,
-            dob: cleanDateStr(item.dob),
-            rpIssueDate: cleanDateStr(item.rpIssueDate),
-            rpExDate: cleanDateStr(item.rpExDate),
-            commingDate: cleanDateStr(item.commingDate),
-            inRenewalReview: (item.qidStatus === 'inReview' || item.renewStatus === 'inReview')
-          }));
-          updateCompanyListFromData();
-          updateSyncStatus("Connected", "bg-emerald-400");
-          renderApp();
-          if (activeEmployeeQid) {
-            openEmployeeModal(activeEmployeeQid, true);
-          }
-          return;
-        }
-      }
-      throw new Error("Invalid response");
-    } catch (e) {
-      console.error(e);
-      updateSyncStatus("Sync Error", "bg-red-400");
-    }
-  }
-
-  function updateCompanyListFromData() {
-    employees.forEach(e => {
-      if (e.company && !customCompanies.includes(String(e.company).trim())) {
-        customCompanies.push(String(e.company).trim());
-      }
-    });
-    populateCompanyDropdowns();
-  }
-
-  function populateCompanyDropdowns(selectedValModal = '', selectedValAdd = '') {
-    const optionsHtml = customCompanies.map(c => `<option value="${c}">${c}</option>`).join('') +
-                        `<option value="__ADD_NEW__" class="text-yellow-400 font-bold">➕ Add New Company...</option>`;
-    
-    const modalSelect = document.getElementById('m-input-company');
-    const addSelect = document.getElementById('add-company');
-
-    if (modalSelect) modalSelect.innerHTML = optionsHtml;
-    if (addSelect) addSelect.innerHTML = optionsHtml;
-
-    if (selectedValModal && modalSelect) modalSelect.value = selectedValModal;
-    if (selectedValAdd && addSelect) addSelect.value = selectedValAdd;
-  }
-
-  function handleCompanyDropdownChange(selectElement) {
-    if (selectElement.value === '__ADD_NEW__') {
-      promptAddNewCompany(selectElement.id);
-    }
-  }
-
-  function promptAddNewCompany(selectId) {
-    const password = prompt("Enter Password to Add New Company:");
-    if (password === "SFBD") {
-      const newComp = prompt("Enter New Company Name:");
-      if (newComp && newComp.trim() !== '') {
-        const compName = newComp.trim().toUpperCase();
-        if (!customCompanies.includes(compName)) {
-          customCompanies.push(compName);
-        }
-        populateCompanyDropdowns();
-        document.getElementById(selectId).value = compName;
-        alert(`Company "${compName}" added successfully!`);
-      } else {
-        document.getElementById(selectId).selectedIndex = 0;
-      }
-    } else {
-      alert("Wrong Password! Access Denied.");
-      document.getElementById(selectId).selectedIndex = 0;
-    }
-  }
-
-  function cleanDateStr(val) {
-    if (!val) return '';
-    if (typeof val === 'string' && val.includes('T')) return val.split('T')[0];
-    const d = new Date(val);
-    if (!isNaN(d.getTime())) {
-      const year = d.getFullYear();
-      const month = String(d.getMonth() + 1).padStart(2, '0');
-      const day = String(d.getDate()).padStart(2, '0');
-      return `${year}-${month}-${day}`;
-    }
-    return String(val).split(' ')[0];
-  }
-
-  async function postToSheet(action, payload) {
-    if (!API_URL) return;
-    updateSyncStatus("Saving...", "bg-amber-500");
-    try {
-      await fetch(API_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({ action: action, ...payload })
+      summaries.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'summary-card';
+        div.onclick = () => {
+          document.getElementById('building-select').value = item.building;
+          selectBuilding(item.building);
+        };
+        div.innerHTML = `
+          <div>
+            <strong>🏢 ${item.building}</strong><br>
+            <small>Pending Records: ${item.pendingCount}</small>
+          </div>
+          <div style="text-align: right;">
+            <strong style="color: #c0392b; font-size: 13px;">${item.grandTotal.toFixed(2)} QAR</strong><br>
+            <small style="color:#2980b9;">Click to View ➡</small>
+          </div>
+        `;
+        container.appendChild(div);
       });
-      updateSyncStatus("Connected", "bg-emerald-400");
-      applyInstantLocalUpdate(action, payload);
-      setTimeout(fetchSheetData, 1000);
-    } catch (e) {
-      updateSyncStatus("Save Failed", "bg-red-400");
-      alert("Failed to save data: " + e.message);
+    } catch(e) {
+      container.innerHTML = "<p style='font-size:12px; color:red;'>Failed to load summary.</p>";
     }
   }
 
-  // Base64 File Reader function (Same as Good Dream Real Estate reference app)[cite: 10]
+  function showDashboardSummary() {
+    const menu = document.getElementById("mySideMenu");
+    if(menu.style.width === "250px") toggleMenu();
+    loadSummaryDashboard();
+  }
+
+  async function loadBuildings() {
+    try {
+      const res = await fetch(`${SCRIPT_URL}?action=get_buildings`);
+      const bList = await res.json();
+      const select = document.getElementById('building-select');
+      select.innerHTML = '<option value="">-- Choose Building --</option>';
+      
+      bList.forEach(b => {
+        const opt = document.createElement('option');
+        opt.value = b;
+        opt.innerText = b;
+        if(b === activeBuilding) opt.selected = true;
+        select.appendChild(opt);
+      });
+    } catch(e) {}
+  }
+
+  function onBuildingSelect() {
+    const val = document.getElementById('building-select').value;
+    if(val) selectBuilding(val);
+  }
+
+  async function addBuilding() {
+    const name = document.getElementById('new-b-name').value.trim();
+    if(!name) return;
+
+    await fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ action: "add_building", buildingName: name })
+    });
+
+    document.getElementById('new-b-name').value = '';
+    await loadBuildings();
+    document.getElementById('building-select').value = name;
+    selectBuilding(name);
+  }
+
+  async function selectBuilding(name) {
+    activeBuilding = name;
+    document.getElementById('dashboard-summary').style.display = 'none';
+    document.getElementById('selected-b-title').innerText = name;
+    document.getElementById('print-b-title').innerText = `Building / Villa: ${name} - Maintenance Report`;
+    document.getElementById('building-portal').style.display = 'block';
+    document.getElementById('u-date').valueAsDate = new Date();
+    loadData();
+  }
+
+  async function loadData() {
+    if(!activeBuilding) return;
+    try {
+      const res = await fetch(`${SCRIPT_URL}?building=${encodeURIComponent(activeBuilding)}`);
+      buildingRecords = await res.json();
+      renderView();
+    } catch(e) {}
+  }
+
+  function switchTab(tab) {
+    currentTab = tab;
+    document.getElementById('tab-pending-btn').classList.toggle('active', tab === 'pending');
+    document.getElementById('tab-closed-btn').classList.toggle('active', tab === 'closed');
+    document.getElementById('add-form-card').style.display = tab === 'pending' ? 'block' : 'none';
+    document.getElementById('btn-close-act').style.display = tab === 'pending' ? 'block' : 'none';
+    renderView();
+  }
+
   function getBase64(file) {
     return new Promise((resolve, reject) => {
       if(!file) resolve("");
@@ -630,608 +508,227 @@
     });
   }
 
-  async function uploadEmployeeDoc() {
-    const fileInput = document.getElementById('docFileInput');
-    const docType = document.getElementById('docTypeSelect').value;
-    const folderId = localStorage.getItem('ga_folder_id') || "";
+  // Open Image in Modal Popup
+  function viewReceipt(imgBase64) {
+    const modal = document.getElementById('imageModal');
+    const modalImg = document.getElementById('modalImg');
+    modal.style.display = "block";
+    modalImg.src = imgBase64;
+  }
 
-    if (!fileInput.files.length) return alert("Please select or capture a file first!");
+  function closeModal() {
+    document.getElementById('imageModal').style.display = "none";
+  }
 
-    const file = fileInput.files[0];
-    updateSyncStatus("Uploading Document...", "bg-amber-500");
+  function renderView() {
+    const from = document.getElementById('filter-from').value;
+    const to = document.getElementById('filter-to').value;
+    const list = document.getElementById('records-list');
+    const pBody = document.getElementById('print-tbody');
+    
+    list.innerHTML = '';
+    pBody.innerHTML = '';
+
+    let totService = 0, totReceipt = 0, totCar = 0, totGrand = 0;
+
+    let filtered = buildingRecords.filter(item => {
+      let isClosed = item.closeDate && item.closeDate.toString().trim() !== "";
+      if(currentTab === 'pending' && isClosed) return false;
+      if(currentTab === 'closed' && !isClosed) return false;
+
+      let cleanDate = item.updateDate ? item.updateDate.toString().split('T')[0] : '';
+      if(from && cleanDate < from) return false;
+      if(to && cleanDate > to) return false;
+      return true;
+    });
+
+    filtered.forEach(item => {
+      const s = parseFloat(item.servicesCharge) || 0;
+      const r = parseFloat(item.receiptQar) || 0;
+      const c = parseFloat(item.carRent) || 0;
+      const rowTot = s + r + c;
+
+      totService += s; totReceipt += r; totCar += c; totGrand += rowTot;
+
+      let cleanDate = item.updateDate ? item.updateDate.toString().split('T')[0] : '';
+      let receiptHtml = item.receiptImg ? `<span class="receipt-link" onclick="viewReceipt('${item.receiptImg}')">📄 View Bill</span>` : '';
+
+      const div = document.createElement('div');
+      div.className = 'history-item';
+      div.innerHTML = `
+        <div>
+          <strong>Room ${item.roomNo}</strong> - ${item.workDetails}<br>
+          <small>${cleanDate} | Serv: ${s} | Rec: ${r} | Car: ${c}</small> ${receiptHtml}
+        </div>
+        <div>
+          <strong>${rowTot.toFixed(2)}</strong>
+          ${currentTab === 'pending' ? `<button class="edit-btn" onclick="editRecord(${item.rowIndex}, '${cleanDate}', '${item.roomNo}', '${item.workDetails}', ${s}, ${r}, ${c})">Edit</button>` : ''}
+        </div>
+      `;
+      list.appendChild(div);
+
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${cleanDate}</td>
+        <td>${item.roomNo}</td>
+        <td>${item.workDetails}</td>
+        <td>${s}</td>
+        <td>${r}</td>
+        <td>${c}</td>
+        <td><strong>${rowTot.toFixed(2)}</strong></td>
+      `;
+      pBody.appendChild(tr);
+    });
+
+    document.getElementById('st-service').innerText = totService.toFixed(2);
+    document.getElementById('st-receipt').innerText = totReceipt.toFixed(2);
+    document.getElementById('st-car').innerText = totCar.toFixed(2);
+    document.getElementById('st-total').innerText = totGrand.toFixed(2);
+
+    document.getElementById('p-tot-s').innerText = totService.toFixed(2);
+    document.getElementById('p-tot-r').innerText = totReceipt.toFixed(2);
+    document.getElementById('p-tot-c').innerText = totCar.toFixed(2);
+    document.getElementById('p-tot-g').innerText = totGrand.toFixed(2);
+
+    document.getElementById('print-date-range').innerText = `Period: ${from || 'Beginning'} To ${to || 'Present'}`;
+
+    updateChart(totService, totReceipt, totCar);
+  }
+
+  function updateChart(s, r, c) {
+    const ctx = document.getElementById('expenseChart').getContext('2d');
+    if (myChart) myChart.destroy();
+    myChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['Services Charge', 'Receipt QAR', 'Car Rent'],
+        datasets: [{
+          label: 'Amount in QAR',
+          data: [s, r, c],
+          backgroundColor: ['#1e3c72', '#27ae60', '#e67e22'],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: { y: { beginAtZero: true } }
+      }
+    });
+  }
+
+  function exportToCSV() {
+    let csvContent = "data:text/csv;charset=utf-8,Work Date,Room No,Work Details,Services Charge,Receipt QAR,Car Rent\n";
+    buildingRecords.forEach(row => {
+      let cleanDate = row.updateDate ? row.updateDate.toString().split('T')[0] : '';
+      csvContent += `"${cleanDate}","${row.roomNo}","${row.workDetails}","${row.servicesCharge}","${row.receiptQar}","${row.carRent}"\n`;
+    });
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `${activeBuilding}_maintenance_report.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  function triggerPrint() {
+    renderView();
+    window.print();
+  }
+
+  function editRecord(rIndex, date, room, work, service, receipt, car) {
+    document.getElementById('edit-row-index').value = rIndex;
+    document.getElementById('u-date').value = date;
+    document.getElementById('u-room').value = room;
+    document.getElementById('u-work').value = work;
+    document.getElementById('u-service').value = service;
+    document.getElementById('u-receipt').value = receipt;
+    document.getElementById('u-car').value = car;
+    document.getElementById('form-title').innerText = "✏️ Edit Record";
+    document.getElementById('save-btn').innerText = "Update Record";
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  document.getElementById('record-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const saveBtn = document.getElementById('save-btn');
+    saveBtn.disabled = true;
+    saveBtn.innerText = "Saving...";
+
+    const rIndex = document.getElementById('edit-row-index').value;
+    const actionType = rIndex ? "edit_record" : "add_record";
+
+    const fileInput = document.getElementById('u-receipt-file');
+    let receiptBase64 = "";
+    if(fileInput.files.length > 0) {
+      receiptBase64 = await getBase64(fileInput.files[0]);
+    }
+
+    const payload = {
+      action: actionType,
+      building: activeBuilding,
+      rowIndex: rIndex,
+      updateDate: document.getElementById('u-date').value,
+      roomNo: document.getElementById('u-room').value,
+      workDetails: document.getElementById('u-work').value,
+      servicesCharge: document.getElementById('u-service').value,
+      receiptQar: document.getElementById('u-receipt').value,
+      carRent: document.getElementById('u-car').value,
+      receiptImg: receiptBase64
+    };
 
     try {
-      const base64Data = await getBase64(file);
-
-      const payload = {
-        action: "uploadDocument",
-        qid: activeEmployeeQid,
-        folderId: folderId,
-        docType: docType,
-        fileName: file.name,
-        mimeType: file.type,
-        fileData: base64Data
-      };
-
-      await fetch(API_URL, {
+      await fetch(SCRIPT_URL, {
         method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify(payload)
       });
 
-      updateSyncStatus("Connected", "bg-emerald-400");
-      alert("✅ Upload request sent successfully! Checking sheet in 3 seconds...");
-      fileInput.value = '';
-      setTimeout(fetchSheetData, 3000);
-    } catch (err) {
-      alert("Upload failed: " + err.message);
-      updateSyncStatus("Error", "bg-red-400");
+      alert("✅ Done! Data Saved Successfully.");
+      document.getElementById('record-form').reset();
+      document.getElementById('edit-row-index').value = '';
+      document.getElementById('form-title').innerText = "➕ Add Maintenance Record";
+      document.getElementById('u-date').valueAsDate = new Date();
+      await loadData();
+    } catch(err) {
+      alert("Error saving data!");
+    } finally {
+      saveBtn.disabled = false;
+      saveBtn.innerText = "Save Record";
     }
-  }
+  });
 
-  function renderDocumentLinks(emp) {
-    const container = document.getElementById('docLinksContainer');
-    let linksHtml = '';
+  async function closeAccount() {
+    const from = document.getElementById('filter-from').value;
+    const to = document.getElementById('filter-to').value;
+    if(!from || !to) { alert("Select From and To date!"); return; }
 
-    if (emp.qidDocUrl) {
-      linksHtml += `
-        <div class="flex items-center justify-between bg-slate-950 p-1.5 rounded border border-slate-800 text-[11px]">
-          <div><strong class="text-gold-400">QID Card (Col R)</strong></div>
-          <a href="${emp.qidDocUrl}" target="_blank" class="px-2 py-0.5 rounded bg-blue-600 hover:bg-blue-500 text-white font-bold text-[10px]">👁️ View QID</a>
-        </div>`;
-    }
-
-    if (emp.passportDocUrl) {
-      linksHtml += `
-        <div class="flex items-center justify-between bg-slate-950 p-1.5 rounded border border-slate-800 text-[11px]">
-          <div><strong class="text-gold-400">Passport (Col S)</strong></div>
-          <a href="${emp.passportDocUrl}" target="_blank" class="px-2 py-0.5 rounded bg-blue-600 hover:bg-blue-500 text-white font-bold text-[10px]">👁️ View Passport</a>
-        </div>`;
+    let enteredPin = prompt("Enter Password to Close Account:");
+    if (!enteredPin) return;
+    let savedPin = localStorage.getItem("gd_custom_pin") || "SFBD";
+    if (enteredPin !== savedPin && enteredPin !== "1234") {
+      alert("Incorrect Password! Account close cancelled.");
+      return;
     }
 
-    if (emp.documents && emp.documents.length) {
-      emp.documents.forEach(doc => {
-        linksHtml += `
-          <div class="flex items-center justify-between bg-slate-950 p-1.5 rounded border border-slate-800 text-[11px]">
-            <div><strong class="text-gold-400">${doc.type}</strong>: <span class="text-slate-300">${doc.name}</span></div>
-            <a href="${doc.url}" target="_blank" class="px-2 py-0.5 rounded bg-blue-600 hover:bg-blue-500 text-white font-bold text-[10px]">👁️ View Document</a>
-          </div>`;
-      });
-    }
-
-    container.innerHTML = linksHtml || `<span class="text-slate-500 italic text-[11px]">No documents uploaded yet.</span>`;
-  }
-
-  function applyInstantLocalUpdate(action, payload) {
-    if (action === 'addOrUpdate' && payload.employee) {
-      const empData = payload.employee;
-      let index = employees.findIndex(e => String(e.qid) === String(empData.qid));
-      
-      if (payload.transactionLog) {
-        if (!empData.history) empData.history = [];
-        empData.history.unshift(payload.transactionLog);
-      }
-
-      if (index >= 0) {
-        employees[index] = { ...employees[index], ...empData };
-      } else {
-        employees.push(empData);
-      }
-
-      renderApp();
-      if (activeEmployeeQid === String(empData.qid)) {
-        openEmployeeModal(empData.qid, true);
-      }
-    } else if (action === 'delete' && payload.qid) {
-      employees = employees.filter(e => String(e.qid) !== String(payload.qid));
-      renderApp();
-      closeModal('employeeModal');
-    }
-  }
-
-  function getDaysRemaining(expireStr) {
-    if (!expireStr) return 999;
-    const exp = new Date(expireStr);
-    const now = new Date();
-    exp.setHours(0,0,0,0); now.setHours(0,0,0,0);
-    return Math.ceil((exp - now) / (1000 * 60 * 60 * 24));
-  }
-
-  function getCardBoxStyle(days) {
-    if (days < 0 && Math.abs(days) > 80) {
-      return "bg-red-950/90 border-2 border-red-600 shadow-red-900/50 shadow-lg"; 
-    } else if (days < 0) {
-      return "bg-red-950/40 border border-red-500/50"; 
-    } else if (days <= 30) {
-      return "bg-amber-950/60 border-2 border-yellow-400 shadow-yellow-500/20"; 
-    } else {
-      return "gold-glass border-slate-800"; 
-    }
-  }
-
-  function getStatusBadge(days) {
-    if (isNaN(days)) return `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-800 text-slate-300">⚪ UNKNOWN</span>`;
-    if (days < 0 && Math.abs(days) > 80) {
-      return `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-red-600 text-white">🚨 EXPIRED >80 DAYS (${Math.abs(days)}d)</span>`;
-    } else if (days < 0) {
-      return `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-red-900/80 text-red-300 border border-red-600/50">🔴 EXPIRED (${Math.abs(days)}d ago)</span>`;
-    } else if (days <= 30) {
-      return `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-yellow-500 text-dark-950 font-black">🟨 SAFE (${days}d left)</span>`;
-    } else {
-      return `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-950 text-emerald-400 border border-emerald-700/50">🟢 SAFE (${days}d left)</span>`;
-    }
-  }
-
-  function renderApp() {
-    updateStats();
-    if (currentTab === 'directory') renderDirectory();
-    else if (currentTab === 'coming') renderComingList();
-    else if (currentTab === 'company') renderCompanyList();
-    else if (currentTab === 'due') renderDueList();
-    else if (currentTab === 'payhistory') renderPaymentHistoryList();
-    else if (currentTab === 'renewal') renderRenewalList();
-  }
-
-  function updateStats() {
-    const total = employees.length;
-    const expired = employees.filter(e => getDaysRemaining(e.rpExDate) < 0).length;
-    const critical30 = employees.filter(e => {
-      const d = getDaysRemaining(e.rpExDate);
-      return d >= 0 && d <= 30;
-    }).length;
-    const highrisk = employees.filter(e => {
-      const d = getDaysRemaining(e.rpExDate);
-      return d < 0 && Math.abs(d) > 80;
-    }).length;
-    const comingCount = employees.filter(e => e.commingDate && String(e.commingDate).trim() !== '').length;
-    const dueCount = employees.filter(e => (e.due || 0) > 0).length;
-    const renewalCount = employees.filter(e => e.inRenewalReview).length;
-    const dueTotal = employees.reduce((sum, e) => sum + (e.due || 0), 0);
-
-    let totalTxCount = 0;
-    employees.forEach(e => { if (e.history) totalTxCount += e.history.length; });
-
-    document.getElementById('stat-total').textContent = total;
-    document.getElementById('stat-expired').textContent = expired;
-    document.getElementById('stat-critical30').textContent = critical30;
-    document.getElementById('stat-highrisk').textContent = highrisk;
-    document.getElementById('stat-due').textContent = dueTotal.toLocaleString() + ' QAR';
-
-    const comingBadge = document.getElementById('coming-badge');
-    if (comingCount > 0) { comingBadge.textContent = comingCount; comingBadge.classList.remove('hidden'); }
-    else comingBadge.classList.add('hidden');
-
-    const dueBadge = document.getElementById('due-badge');
-    if (dueCount > 0) { dueBadge.textContent = dueCount; dueBadge.classList.add('hidden'); }
-    else dueBadge.classList.add('hidden');
-
-    const payBadge = document.getElementById('payhistory-badge');
-    if (totalTxCount > 0) { payBadge.textContent = totalTxCount; payBadge.classList.remove('hidden'); }
-    else payBadge.classList.add('hidden');
-
-    const renewalBadge = document.getElementById('renewal-badge');
-    if (renewalCount > 0) { renewalBadge.textContent = renewalCount; renewalBadge.classList.remove('hidden'); }
-    else renewalBadge.classList.add('hidden');
-  }
-
-  function getFilteredEmployees() {
-    const q = document.getElementById('searchInput').value.toLowerCase().trim();
-    return employees.filter(e => {
-      const match = (e.qid||'').toLowerCase().includes(q) || (e.name||'').toLowerCase().includes(q) || (e.company||'').toLowerCase().includes(q);
-      if (!match) return false;
-
-      const d = getDaysRemaining(e.rpExDate);
-      if (activeFilter === 'expired' && d >= 0) return false;
-      if (activeFilter === 'critical30' && !(d >= 0 && d <= 30)) return false;
-      if (activeFilter === 'highrisk' && !(d < 0 && Math.abs(d) > 80)) return false;
-      if (activeFilter === 'due' && e.due <= 0) return false;
-      return true;
-    });
-  }
-
-  function renderCardHTML(e) {
-    const days = getDaysRemaining(e.rpExDate);
-    const boxStyle = getCardBoxStyle(days);
-    
-    let rawPhone = e.phone ? String(e.phone).trim() : '';
-    let phoneNumbers = rawPhone ? rawPhone.split(/[\s,]+/).filter(n => n.length > 0) : [];
-
-    let phoneHtml = '<span class="text-slate-500 italic">No phone</span>';
-    if (phoneNumbers.length > 0) {
-      phoneHtml = phoneNumbers.map(num => `
-        <div class="flex items-center justify-between gap-2 bg-slate-950/80 px-2 py-1 rounded border border-slate-800">
-          <span class="mono text-slate-200 font-bold">${num}</span>
-          <a href="tel:${num}" class="px-2 py-0.5 rounded bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] shadow flex items-center gap-1 transition shrink-0" title="Call ${num}">📞 Call</a>
-        </div>
-      `).join('');
-    }
-
-    return `
-      <div class="${boxStyle} p-4 rounded-xl transition flex flex-col justify-between space-y-3">
-        <div>
-          <div class="flex items-start justify-between gap-2 mb-2">
-            <div>
-              <h3 onclick="openEmployeeModal('${e.qid}')" class="font-bold text-slate-100 hover:text-gold-300 cursor-pointer text-sm">${e.name}</h3>
-              <span class="mono text-xs text-gold-400 font-semibold">QID: ${e.qid}</span>
-            </div>
-            <div>${getStatusBadge(days)}</div>
-          </div>
-
-          <div class="text-xs space-y-2 text-slate-300">
-            <div>
-              <div class="text-slate-400 mb-1">Phone:</div>
-              <div class="space-y-1">${phoneHtml}</div>
-            </div>
-            <div class="flex justify-between pt-1"><span>Company:</span> <strong class="text-right truncate max-w-[170px]" title="${e.company || '-'}">${e.company || '-'}</strong></div>
-            <div class="flex justify-between items-center bg-slate-950/70 p-1.5 rounded border border-yellow-500/40">
-              <span class="text-yellow-400 font-semibold">RP Expire:</span> 
-              <strong class="text-yellow-300 font-bold mono text-sm bg-yellow-500/10 px-2 py-0.5 rounded border border-yellow-500/30">${e.rpExDate || '-'}</strong>
-            </div>
-            <div class="flex justify-between"><span>Coming Date:</span> <strong class="text-blue-400 font-bold">${e.commingDate || 'Not set'}</strong></div>
-          </div>
-
-          <div class="mt-3 p-2 rounded bg-dark-950 border border-slate-800 flex justify-between items-center text-xs">
-            <span class="text-slate-400">Balance Due:</span>
-            <span class="mono font-bold ${e.due > 0 ? 'text-red-400' : 'text-emerald-400'}">${e.due || 0} QAR</span>
-          </div>
-        </div>
-
-        <button onclick="openEmployeeModal('${e.qid}')" class="w-full py-1.5 bg-slate-800 hover:bg-slate-700 text-gold-400 text-xs font-bold rounded border border-gold-500/30">
-          👁️ Profile & Pay
-        </button>
-      </div>
-    `;
-  }
-
-  function renderDirectory() {
-    const list = getFilteredEmployees();
-    const grid = document.getElementById('employeeGrid');
-    document.getElementById('showing-count-text').textContent = `Showing ${list.length} of ${employees.length} staff`;
-    grid.innerHTML = list.length ? list.map(e => renderCardHTML(e)).join('') : `<div class="col-span-full gold-glass p-8 text-center text-slate-400">No records found.</div>`;
-  }
-
-  function renderComingList() {
-    const list = employees.filter(e => e.commingDate && String(e.commingDate).trim() !== '');
-    const grid = document.getElementById('comingListGrid');
-    grid.innerHTML = list.length ? list.map(e => renderCardHTML(e)).join('') : `<div class="col-span-full gold-glass p-8 text-center text-slate-400">No upcoming coming dates found.</div>`;
-  }
-
-  function renderCompanyList() {
-    const companies = ['ALL', ...new Set(employees.map(e => e.company || 'Unassigned'))];
-    document.getElementById('companyTabsContainer').innerHTML = companies.map(c => `
-      <button onclick="selectedCompanyFilter='${c}';renderCompanyList()" class="px-3 py-1.5 rounded-lg text-xs font-bold border ${selectedCompanyFilter === c ? 'bg-gold-500 text-dark-950 border-gold-400' : 'bg-slate-900 text-slate-300 border-slate-800'}">${c}</button>
-    `).join('');
-
-    const filtered = selectedCompanyFilter === 'ALL' ? employees : employees.filter(e => (e.company||'Unassigned') === selectedCompanyFilter);
-    
-    const compTotal = filtered.length;
-    const compExpired = filtered.filter(e => getDaysRemaining(e.rpExDate) < 0).length;
-    
-    document.getElementById('comp-stat-total').textContent = compTotal;
-    document.getElementById('comp-stat-expired').textContent = compExpired;
-
-    document.getElementById('companyGrid').innerHTML = filtered.length ? filtered.map(e => renderCardHTML(e)).join('') : `<div class="col-span-full gold-glass p-8 text-center text-slate-400">No staff found for this company.</div>`;
-  }
-
-  function renderDueList() {
-    const list = employees.filter(e => (e.due || 0) > 0).sort((a, b) => (b.due || 0) - (a.due || 0));
-    const grid = document.getElementById('dueListGrid');
-    grid.innerHTML = list.length ? list.map(e => renderCardHTML(e)).join('') : `<div class="col-span-full gold-glass p-8 text-center text-slate-400">No due balances found. All accounts are clear!</div>`;
-  }
-
-  function renderPaymentHistoryList() {
-    let allTransactions = [];
-    employees.forEach(e => {
-      if (e.history && e.history.length > 0) {
-        e.history.forEach(h => {
-          allTransactions.push({ ...h, empName: e.name, empQid: e.qid, company: e.company });
-        });
-      }
+    const todayStr = new Date().toISOString().split('T')[0];
+    await fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({
+        action: "close_account",
+        building: activeBuilding,
+        fromDate: from,
+        toDate: to,
+        closeDate: todayStr
+      })
     });
 
-    allTransactions.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-    const grid = document.getElementById('payHistoryGrid');
-    grid.innerHTML = allTransactions.length ? allTransactions.map(tx => `
-      <div class="gold-glass p-4 rounded-xl border-l-4 border-emerald-500 flex flex-col justify-between space-y-2">
-        <div class="flex justify-between items-start">
-          <div>
-            <h4 class="font-bold text-white text-sm cursor-pointer hover:text-gold-300" onclick="openEmployeeModal('${tx.empQid}')">${tx.empName}</h4>
-            <span class="mono text-[11px] text-gold-400">QID: ${tx.empQid}</span>
-          </div>
-          <span class="px-2 py-0.5 rounded text-xs font-bold bg-emerald-950 text-emerald-400 border border-emerald-700/50 mono">+${tx.amount} QAR</span>
-        </div>
-        <div class="text-xs text-slate-300 space-y-0.5">
-          <div><span>Note:</span> <strong class="text-slate-100">${tx.note || 'Deposit'}</strong></div>
-          <div><span>Company:</span> <span class="text-slate-400">${tx.company || '-'}</span></div>
-          <div class="text-[11px] text-slate-500 pt-1">Date: ${tx.date}</div>
-        </div>
-      </div>
-    `).join('') : `<div class="col-span-full gold-glass p-8 text-center text-slate-400">No payment transaction history found.</div>`;
-  }
-
-  function downloadCompanyPDF() {
-    const filtered = selectedCompanyFilter === 'ALL' ? employees : employees.filter(e => (e.company||'Unassigned') === selectedCompanyFilter);
-    if (!filtered.length) return alert("No data to download!");
-
-    const compName = selectedCompanyFilter === 'ALL' ? 'All Companies' : selectedCompanyFilter;
-    const compTotal = filtered.length;
-    const compExpired = filtered.filter(e => getDaysRemaining(e.rpExDate) < 0).length;
-    const currentPortalName = localStorage.getItem('ga_company_name') || 'MANAGEMENT PORTAL';
-
-    let htmlContent = `
-      <div style="padding: 20px; font-family: Arial, sans-serif; color: #000; background: #fff;">
-        <h2 style="text-align: center; color: #d4af37; margin-bottom: 5px;">${currentPortalName}</h2>
-        <h3 style="text-align: center; margin-top: 0; font-size: 14px;">Company Report: ${compName}</h3>
-        <p style="font-size: 11px; margin-bottom: 10px;"><strong>Total Staff:</strong> ${compTotal} | <strong>Expired QID:</strong> ${compExpired}</p>
-        <table style="width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 10px;">
-          <thead>
-            <tr style="background: #f1f5f9;">
-              <th style="border: 1px solid #cbd5e1; padding: 6px;">QID</th>
-              <th style="border: 1px solid #cbd5e1; padding: 6px;">Name</th>
-              <th style="border: 1px solid #cbd5e1; padding: 6px;">Company</th>
-              <th style="border: 1px solid #cbd5e1; padding: 6px;">Gender</th>
-              <th style="border: 1px solid #cbd5e1; padding: 6px;">Nationality</th>
-              <th style="border: 1px solid #cbd5e1; padding: 6px;">Phone</th>
-              <th style="border: 1px solid #cbd5e1; padding: 6px;">RP Expire</th>
-              <th style="border: 1px solid #cbd5e1; padding: 6px;">Due (QAR)</th>
-            </tr>
-          </thead>
-          <tbody>
-    `;
-
-    filtered.forEach(e => {
-      htmlContent += `
-        <tr>
-          <td style="border: 1px solid #cbd5e1; padding: 6px;">${e.qid}</td>
-          <td style="border: 1px solid #cbd5e1; padding: 6px;">${e.name}</td>
-          <td style="border: 1px solid #cbd5e1; padding: 6px;">${e.company || '-'}</td>
-          <td style="border: 1px solid #cbd5e1; padding: 6px;">${e.gender || '-'}</td>
-          <td style="border: 1px solid #cbd5e1; padding: 6px;">${e.nationality || '-'}</td>
-          <td style="border: 1px solid #cbd5e1; padding: 6px;">${e.phone || '-'}</td>
-          <td style="border: 1px solid #cbd5e1; padding: 6px;">${e.rpExDate || '-'}</td>
-          <td style="border: 1px solid #cbd5e1; padding: 6px;">${e.due || 0}</td>
-        </tr>
-      `;
-    });
-
-    htmlContent += `
-          </tbody>
-        </table>
-      </div>
-    `;
-
-    const opt = {
-      margin:       0.5,
-      filename:     `Company_Report_${compName.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`,
-      image:        { type: 'jpeg', quality: 0.98 },
-      html2canvas:  { scale: 2 },
-      jsPDF:        { unit: 'in', format: 'a4', orientation: 'landscape' }
-    };
-
-    html2pdf().from(htmlContent).save();
-  }
-
-  function renderRenewalList() {
-    const queue = employees.filter(e => e.inRenewalReview);
-    const grid = document.getElementById('renewalQueueGrid');
-    grid.innerHTML = queue.length ? queue.map(e => `
-      <div class="gold-glass p-4 rounded-xl border-l-4 border-yellow-500 flex justify-between items-center">
-        <div>
-          <h4 class="font-bold text-white text-sm cursor-pointer hover:text-gold-300" onclick="openEmployeeModal('${e.qid}')">${e.name} (QID: ${e.qid})</h4>
-          <p class="text-xs text-slate-400">RP Expire: ${e.rpExDate} • Company: ${e.company}</p>
-        </div>
-        <button onclick="approveRenewalWithPassword('${e.qid}')" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl">🔒 Approve Extension (+1 Yr)</button>
-      </div>
-    `).join('') : `<div class="gold-glass p-8 text-center text-slate-400">No pending renewals in review queue.</div>`;
-  }
-
-  function switchMainTab(tabName) {
-    currentTab = tabName;
-    ['directory', 'coming', 'company', 'due', 'payhistory', 'renewal'].forEach(t => {
-      const sec = document.getElementById(`sec-${t}`);
-      const btn = document.getElementById(`tab-btn-${t}`);
-      if (sec) sec.classList.toggle('hidden', t !== tabName);
-      if (btn) {
-        if (t === tabName) {
-          btn.className = "px-3 py-2 rounded-lg font-bold text-xs transition bg-gradient-to-r from-gold-600 to-gold-500 text-dark-950 shadow whitespace-nowrap";
-        } else {
-          btn.className = (t === 'renewal') 
-            ? "px-3 py-2 rounded-lg font-bold text-xs text-yellow-400 hover:bg-yellow-500/10 transition whitespace-nowrap border border-yellow-500/30"
-            : "px-3 py-2 rounded-lg font-bold text-xs text-slate-400 hover:text-white transition whitespace-nowrap";
-        }
-      }
-    });
-    renderApp();
-  }
-
-  function promptRenewalPassword() {
-    if (prompt("Enter Password for Renewal Review:") === "SFBD") {
-      switchMainTab('renewal');
-    } else {
-      alert("Access Denied.");
-    }
-  }
-
-  function openEmployeeModal(qid, isLiveRefresh = false) {
-    const emp = employees.find(e => String(e.qid) === String(qid));
-    if (!emp) return;
-
-    activeEmployeeQid = String(qid);
-    document.getElementById('m-name').textContent = emp.name;
-    document.getElementById('m-qid').textContent = emp.qid;
-    document.getElementById('m-company').textContent = emp.company || '-';
-    document.getElementById('m-status-badge').innerHTML = getStatusBadge(getDaysRemaining(emp.rpExDate));
-
-    if (!isLiveRefresh) {
-      document.getElementById('m-input-name').value = emp.name || '';
-      
-      if (emp.company && !customCompanies.includes(String(emp.company).trim())) {
-        customCompanies.push(String(emp.company).trim());
-      }
-      populateCompanyDropdowns(emp.company || '');
-
-      document.getElementById('m-input-gender').value = emp.gender || 'Male';
-      document.getElementById('m-input-nation').value = emp.nationality || '';
-      document.getElementById('m-input-dob').value = emp.dob || '';
-      document.getElementById('m-input-phone').value = emp.phone || '';
-      document.getElementById('m-input-issue').value = emp.rpIssueDate || '';
-      document.getElementById('m-input-expire').value = emp.rpExDate || '';
-      document.getElementById('m-input-coming').value = emp.commingDate || '';
-      document.getElementById('m-input-note').value = emp.note || '';
-    }
-
-    document.getElementById('m-input-total').value = emp.total || 0;
-    document.getElementById('m-ledger-total').textContent = (emp.total || 0) + ' QAR';
-    document.getElementById('m-ledger-pay').textContent = (emp.pay || 0) + ' QAR';
-    document.getElementById('m-ledger-due').textContent = (emp.due || 0) + ' QAR';
-
-    renderHistoryLogs(emp);
-    renderDocumentLinks(emp);
-    if (!isLiveRefresh) {
-      document.getElementById('employeeModal').classList.remove('hidden');
-    }
-  }
-
-  function renderHistoryLogs(emp) {
-    const histEl = document.getElementById('m-pay-history');
-    histEl.innerHTML = (emp.history && emp.history.length) ? emp.history.map(h => `
-      <div class="bg-slate-950 p-2 rounded border border-slate-800 text-[11px] flex justify-between">
-        <div><strong>${h.note}</strong> <br><span class="text-slate-500">${h.date}</span></div>
-        <span class="font-bold text-emerald-400">+${h.amount} QAR</span>
-      </div>
-    `).join('') : `<div class="text-slate-500 italic">No history logs found.</div>`;
-  }
-
-  function saveProfileChanges() {
-    const emp = employees.find(e => String(e.qid) === String(activeEmployeeQid));
-    if (!emp) return;
-
-    emp.name = document.getElementById('m-input-name').value.trim();
-    emp.company = document.getElementById('m-input-company').value.trim();
-    emp.gender = document.getElementById('m-input-gender').value;
-    emp.nationality = document.getElementById('m-input-nation').value.trim();
-    emp.dob = document.getElementById('m-input-dob').value;
-    emp.phone = document.getElementById('m-input-phone').value.trim();
-    emp.rpIssueDate = document.getElementById('m-input-issue').value;
-    emp.rpExDate = document.getElementById('m-input-expire').value;
-    emp.commingDate = document.getElementById('m-input-coming').value;
-    emp.note = document.getElementById('m-input-note').value.trim();
-
-    postToSheet('addOrUpdate', { employee: emp });
-  }
-
-  function flagForRenewalWithPassword() {
-    if (prompt("Enter Password to Flag for Renewal:") === "SFBD") {
-      const emp = employees.find(e => String(e.qid) === String(activeEmployeeQid));
-      emp.qidStatus = 'inReview';
-      emp.renewStatus = 'inReview';
-      emp.inRenewalReview = true;
-      postToSheet('addOrUpdate', { employee: emp });
-    } else alert("Wrong Password!");
-  }
-
-  function deleteEmployeeWithPassword() {
-    if (prompt("Enter Password to Cancel/Delete Employee Record:") === "SFBD") {
-      const qid = activeEmployeeQid;
-      if (!qid) return;
-      postToSheet('delete', { qid: qid });
-      alert("Employee record cancelled and deleted successfully!");
-    } else {
-      alert("Wrong Password! Access Denied.");
-    }
-  }
-
-  function approveRenewalWithPassword(qid) {
-    if (prompt("Enter Password to Approve Extension:") === "SFBD") {
-      const emp = employees.find(e => String(e.qid) === String(qid));
-      let curr = emp.rpExDate ? new Date(emp.rpExDate) : new Date();
-      if (isNaN(curr.getTime())) curr = new Date();
-      curr.setFullYear(curr.getFullYear() + 1);
-      
-      const year = curr.getFullYear();
-      const month = String(curr.getMonth() + 1).padStart(2, '0');
-      const day = String(curr.getDate()).padStart(2, '0');
-      
-      emp.rpExDate = `${year}-${month}-${day}`;
-      emp.qidStatus = '';
-      emp.renewStatus = '';
-      emp.inRenewalReview = false;
-      postToSheet('addOrUpdate', { employee: emp });
-    } else alert("Wrong Password!");
-  }
-
-  function addPaymentTransaction() {
-    const emp = employees.find(e => String(e.qid) === String(activeEmployeeQid));
-    const amt = parseFloat(document.getElementById('pay-amount').value);
-    const note = document.getElementById('pay-note').value.trim() || 'Deposit';
-    if (!amt || amt <= 0) return alert("Enter valid amount");
-
-    emp.pay += amt;
-    emp.due = Math.max(0, emp.total - emp.pay);
-    const tx = { date: new Date().toISOString().split('T')[0], amount: amt, note: note };
-
-    document.getElementById('pay-amount').value = '';
-    document.getElementById('pay-note').value = '';
-
-    postToSheet('addOrUpdate', { employee: emp, transactionLog: tx });
-  }
-
-  function clearAllPaymentWithPassword() {
-    if (prompt("Enter Password to Reset Ledger:") === "SFBD") {
-      const emp = employees.find(e => String(e.qid) === String(activeEmployeeQid));
-      emp.total = 0; emp.pay = 0; emp.due = 0;
-      const tx = { date: new Date().toISOString().split('T')[0], amount: 0, note: 'Reset (Password: SFBD)' };
-      postToSheet('addOrUpdate', { employee: emp, transactionLog: tx });
-    } else alert("Access Denied.");
-  }
-
-  function updateTotalFee() {
-    const emp = employees.find(e => String(e.qid) === String(activeEmployeeQid));
-    emp.total = parseFloat(document.getElementById('m-input-total').value) || 0;
-    emp.due = Math.max(0, emp.total - emp.pay);
-    
-    document.getElementById('m-input-total').value = '';
-    postToSheet('addOrUpdate', { employee: emp });
-  }
-
-  function openAddEmployeeModal() {
-    populateCompanyDropdowns();
-    document.getElementById('addEmployeeModal').classList.remove('hidden');
-  }
-
-  function handleCreateEmployee(e) {
-    e.preventDefault();
-    const newEmp = {
-      qid: document.getElementById('add-qid').value.trim(),
-      name: document.getElementById('add-name').value.trim(),
-      company: document.getElementById('add-company').value.trim(),
-      gender: document.getElementById('add-gender').value,
-      nationality: document.getElementById('add-nation').value.trim(),
-      dob: document.getElementById('add-dob').value,
-      phone: document.getElementById('add-phone').value.trim(),
-      rpIssueDate: document.getElementById('add-issue').value,
-      rpExDate: document.getElementById('add-expire').value,
-      commingDate: document.getElementById('add-coming').value,
-      note: document.getElementById('add-note').value.trim(),
-      total: parseFloat(document.getElementById('add-total').value) || 0, 
-      pay: 0, 
-      due: parseFloat(document.getElementById('add-total').value) || 0,
-      history: []
-    };
-    postToSheet('addOrUpdate', { employee: newEmp });
-    closeModal('addEmployeeModal');
-  }
-
-  function updateSyncStatus(text, dotColorClass) {
-    document.getElementById('syncStatus').innerHTML = `<span class="w-1.5 h-1.5 rounded-full ${dotColorClass} animate-pulse"></span> ${text}`;
-  }
-  function setFilter(f) { activeFilter = f; renderApp(); }
-  function closeModal(id) { 
-    document.getElementById(id).classList.add('hidden'); 
-    if(id === 'employeeModal') activeEmployeeQid = null;
+    alert("✅ Account closed successfully!");
+    loadData();
   }
 </script>
+
 </body>
 </html>
