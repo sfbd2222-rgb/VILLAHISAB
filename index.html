@@ -4,92 +4,134 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Good Dream Real Estate - Building Management</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     :root {
-      --primary: #1e3c72;
-      --secondary: #2a5298;
-      --accent: #27ae60;
-      --bg: #f4f6f9;
+      --primary: #0f294a;
+      --secondary: #1e4b85;
+      --accent: #10b981;
+      --accent-hover: #059669;
+      --danger: #ef4444;
+      --purple: #7c3aed;
+      --bg: #f1f5f9;
       --card-bg: #ffffff;
-      --text: #333333;
-      --border: #e1e8ed;
+      --text: #1e293b;
+      --muted: #64748b;
+      --border: #e2e8f0;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background-color: var(--bg); padding: 16px; color: var(--text); }
-    .container { max-width: 650px; margin: 0 auto; }
-    
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif; }
+    body { background-color: var(--bg); padding: 14px; color: var(--text); line-height: 1.5; }
+    .container { max-width: 680px; margin: 0 auto; }
+
+    /* Auth Screen */
     #pin-auth {
-      background: var(--card-bg); padding: 30px 20px; border-radius: 16px; margin-top: 50px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.08); text-align: center; border: 1px solid var(--border);
+      background: var(--card-bg); padding: 36px 24px; border-radius: 20px; margin-top: 60px;
+      box-shadow: 0 12px 30px rgba(15, 41, 74, 0.08); text-align: center; border: 1px solid var(--border);
     }
-    #pin-auth h2 { color: var(--primary); font-size: 20px; margin-bottom: 8px; }
-    #pin-auth p { font-size: 13px; color: #666; margin-bottom: 20px; }
+    #pin-auth h2 { color: var(--primary); font-size: 22px; font-weight: 800; letter-spacing: 0.5px; margin-bottom: 6px; }
+    #pin-auth p { font-size: 13px; color: var(--muted); margin-bottom: 24px; }
 
+    /* Header */
     .header {
       background: linear-gradient(135deg, var(--primary), var(--secondary));
-      color: #fff; padding: 16px 20px; border-radius: 16px; margin-bottom: 16px;
-      box-shadow: 0 6px 15px rgba(30,60,114,0.2); display: flex; justify-content: space-between; align-items: center;
+      color: #fff; padding: 18px 22px; border-radius: 16px; margin-bottom: 16px;
+      box-shadow: 0 8px 20px rgba(15, 41, 74, 0.18); display: flex; justify-content: space-between; align-items: center;
     }
-    .header h1 { font-size: 16px; font-weight: 700; }
-    
-    .menu-btn { background: none; border: none; color: #fff; font-size: 22px; cursor: pointer; }
+    .header h1 { font-size: 17px; font-weight: 700; letter-spacing: 0.4px; }
+    .header span { font-size: 11px; opacity: 0.85; display: block; font-weight: 400; }
+
+    .menu-btn { background: rgba(255,255,255,0.12); border: none; color: #fff; font-size: 20px; width: 38px; height: 38px; border-radius: 10px; cursor: pointer; transition: 0.2s; }
+    .menu-btn:hover { background: rgba(255,255,255,0.22); }
+
+    /* Side Menu */
     .side-menu {
       height: 100%; width: 0; position: fixed; z-index: 1000; top: 0; right: 0;
-      background-color: #1e3c72; overflow-x: hidden; transition: 0.3s; padding-top: 60px; box-shadow: -5px 0 15px rgba(0,0,0,0.3);
+      background-color: var(--primary); overflow-x: hidden; transition: 0.3s ease; padding-top: 65px; box-shadow: -8px 0 25px rgba(0,0,0,0.25);
     }
-    .side-menu a { padding: 12px 24px; text-decoration: none; font-size: 14px; color: #fff; display: block; transition: 0.2s; border-bottom: 1px solid rgba(255,255,255,0.1); cursor: pointer; }
-    .side-menu a:hover { background-color: #2a5298; }
-    .side-menu .close-btn { position: absolute; top: 15px; right: 20px; font-size: 24px; }
+    .side-menu a { padding: 14px 24px; text-decoration: none; font-size: 14px; color: #f8fafc; display: block; transition: 0.2s; border-bottom: 1px solid rgba(255,255,255,0.08); cursor: pointer; }
+    .side-menu a:hover { background-color: var(--secondary); padding-left: 28px; }
+    .side-menu .close-btn { position: absolute; top: 15px; right: 20px; font-size: 26px; border: none; }
 
-    .card { background: var(--card-bg); padding: 18px; border-radius: 16px; margin-bottom: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid var(--border); }
-    .card h3 { font-size: 15px; margin-bottom: 12px; color: var(--primary); border-bottom: 2px solid var(--bg); padding-bottom: 8px; }
+    /* Cards */
+    .card { background: var(--card-bg); padding: 20px; border-radius: 16px; margin-bottom: 16px; box-shadow: 0 4px 14px rgba(0,0,0,0.03); border: 1px solid var(--border); }
+    .card h3 { font-size: 15px; font-weight: 700; margin-bottom: 14px; color: var(--primary); border-bottom: 1px solid var(--border); padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
 
+    /* Forms & Inputs */
     .form-group { margin-bottom: 12px; text-align: left; }
-    .form-group label { display: block; font-size: 12px; margin-bottom: 5px; color: #555; font-weight: 600; }
-    .form-group input, .form-group select { width: 100%; padding: 11px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px; outline: none; background: #fafbfc; }
-    .form-group input:focus { border-color: var(--secondary); background: #fff; }
-    
-    .btn { width: 100%; padding: 12px; background: var(--accent); color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: bold; cursor: pointer; transition: 0.2s; }
-    .btn:hover { opacity: 0.9; }
-    .btn:disabled { background: #95a5a6; cursor: not-allowed; }
-    .btn-add { background: var(--secondary); margin-top: 8px; }
-    .btn-close { background: #8e44ad; margin-top: 8px; }
-    .btn-print { background: #c0392b; margin-top: 8px; }
-    .btn-csv { background: #d35400; margin-top: 8px; }
-    .btn-fingerprint { background: #e67e22; margin-top: 10px; }
+    .form-group label { display: block; font-size: 12px; margin-bottom: 5px; color: #475569; font-weight: 600; }
+    .form-group input, .form-group select {
+      width: 100%; padding: 11px 12px; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 13.5px; outline: none; background: #f8fafc; color: var(--text); transition: 0.2s;
+    }
+    .form-group input:focus, .form-group select:focus { border-color: var(--secondary); background: #fff; box-shadow: 0 0 0 3px rgba(30, 75, 133, 0.1); }
 
-    .filter-box { display: flex; gap: 8px; }
+    /* Buttons */
+    .btn { width: 100%; padding: 12px; background: var(--accent); color: #fff; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+    .btn:hover { background: var(--accent-hover); transform: translateY(-1px); }
+    .btn:disabled { background: #94a3b8; cursor: not-allowed; transform: none; }
+    .btn-add { background: var(--secondary); }
+    .btn-add:hover { background: var(--primary); }
+    .btn-close { background: var(--purple); margin-top: 8px; }
+    .btn-close:hover { background: #6d28d9; }
+    .btn-print { background: #dc2626; margin-top: 8px; }
+    .btn-print:hover { background: #b91c1c; }
+    .btn-csv { background: #d97706; margin-top: 8px; }
+    .btn-csv:hover { background: #b45309; }
+    .btn-fingerprint { background: #0284c7; margin-top: 10px; }
+    .btn-back { background: #475569; margin-bottom: 14px; display: flex; align-items: center; justify-content: center; gap: 6px; }
+
+    .filter-box { display: flex; gap: 10px; }
     .filter-box .form-group { flex: 1; }
 
-    .tab-menu { display: flex; gap: 6px; margin-bottom: 16px; }
-    .tab-btn { flex: 1; padding: 11px; border: none; background: #e2e8f0; color: #475569; font-weight: bold; border-radius: 8px; cursor: pointer; font-size: 12px; }
-    .tab-btn.active { background: var(--primary); color: #fff; }
+    /* Tabs */
+    .tab-menu { display: flex; gap: 8px; margin-bottom: 16px; background: #e2e8f0; padding: 5px; border-radius: 12px; }
+    .tab-btn { flex: 1; padding: 10px; border: none; background: transparent; color: #475569; font-weight: 700; border-radius: 9px; cursor: pointer; font-size: 13px; transition: 0.2s; }
+    .tab-btn.active { background: var(--primary); color: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.12); }
 
-    .stat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 14px; background: #f8fafc; padding: 10px; border-radius: 10px; font-size: 12px; border: 1px solid var(--border); }
-    .stat-grid div { background: #fff; padding: 10px; border-radius: 8px; text-align: center; border: 1px solid var(--border); }
+    /* Stats Grid */
+    .stat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 16px; }
+    .stat-box { background: #f8fafc; padding: 12px; border-radius: 12px; text-align: center; border: 1px solid var(--border); }
+    .stat-box span { font-size: 11px; color: var(--muted); font-weight: 600; text-transform: uppercase; display: block; margin-bottom: 3px; }
+    .stat-box strong { font-size: 16px; color: var(--primary); }
+    .stat-box.grand { background: #fef2f2; border-color: #fecaca; }
+    .stat-box.grand strong { color: #dc2626; }
 
-    .history-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 12px; }
-    .history-item:last-child { border-bottom: none; }
-    .edit-btn { background: #f39c12; color: #fff; border: none; padding: 4px 10px; border-radius: 6px; font-size: 11px; cursor: pointer; margin-left: 8px; }
-    .receipt-link { color: #2980b9; text-decoration: underline; font-size: 11px; margin-right: 5px; font-weight: bold; cursor: pointer; }
+    /* History / Records List */
+    .history-item {
+      display: flex; justify-content: space-between; align-items: flex-start; padding: 14px 12px;
+      border: 1px solid var(--border); border-radius: 12px; margin-bottom: 10px; background: #fff; transition: 0.2s;
+    }
+    .history-item:hover { border-color: #cbd5e1; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+    .item-title { font-size: 14px; font-weight: 700; color: var(--primary); margin-bottom: 3px; }
+    .room-badge { background: #e0e7ff; color: #1e40af; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; margin-right: 6px; }
+    .closed-badge { background: #dcfce7; color: #166534; padding: 2px 7px; border-radius: 6px; font-size: 10px; font-weight: 700; margin-left: 6px; }
+    .item-meta { font-size: 12px; color: var(--muted); margin-top: 4px; }
+    .edit-btn { background: #f59e0b; color: #fff; border: none; padding: 5px 11px; border-radius: 7px; font-size: 11px; font-weight: 600; cursor: pointer; margin-top: 6px; display: inline-block; }
+    .receipt-link {
+      display: inline-flex; align-items: center; gap: 4px; background: #eff6ff; color: #2563eb;
+      padding: 3px 9px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; margin-top: 6px; border: 1px solid #bfdbfe;
+    }
 
-    .summary-card { background: #eef2f7; padding: 12px; border-radius: 10px; margin-bottom: 10px; border-left: 5px solid #1e3c72; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
-    .summary-card:hover { background: #e2e8f0; }
+    /* Summary Cards */
+    .summary-card {
+      background: #f8fafc; padding: 14px 16px; border-radius: 12px; margin-bottom: 10px;
+      border: 1px solid var(--border); border-left: 5px solid var(--primary);
+      display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.2s;
+    }
+    .summary-card:hover { background: #f1f5f9; transform: translateX(3px); }
 
-    /* Modal Popup for Image Viewer */
-    .modal { display: none; position: fixed; z-index: 2000; padding-top: 50px; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.8); text-align: center; }
-    .modal-content { margin: auto; display: block; max-width: 90%; max-height: 80vh; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
-    .close-modal { position: absolute; top: 20px; right: 30px; color: #f1f1f1; font-size: 35px; font-weight: bold; cursor: pointer; }
+    /* Modal Popup */
+    .modal { display: none; position: fixed; z-index: 2000; padding-top: 50px; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(15, 23, 42, 0.88); text-align: center; }
+    .modal-content { margin: auto; display: block; max-width: 92%; max-height: 82vh; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+    .close-modal { position: absolute; top: 18px; right: 26px; color: #fff; font-size: 36px; font-weight: bold; cursor: pointer; }
 
     #main-app { display: none; }
 
-    .print-header { display: none; text-align: center; margin-bottom: 20px; }
-    .print-footer { display: none; margin-top: 30px; justify-content: space-between; align-items: center; font-size: 11px; border-top: 1px solid #ddd; padding-top: 10px; }
+    /* Print Styles */
+    .print-header { display: none; text-align: center; margin-bottom: 20px; border-bottom: 2px solid #1e3c72; padding-bottom: 12px; }
+    .print-footer { display: none; margin-top: 30px; justify-content: space-between; align-items: flex-end; font-size: 12px; border-top: 1px solid #cbd5e1; padding-top: 14px; }
     .print-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-    .print-table th, .print-table td { border: 1px solid #bbb; padding: 8px; text-align: left; font-size: 11px; }
-    .print-table th { background-color: #f1f5f9; font-weight: bold; color: #000; }
+    .print-table th, .print-table td { border: 1px solid #cbd5e1; padding: 9px; text-align: left; font-size: 11px; }
+    .print-table th { background-color: #f1f5f9; font-weight: bold; color: #0f294a; }
 
     @media print {
       body * { visibility: hidden; }
@@ -108,22 +150,25 @@
   <!-- PIN & Fingerprint Security Section -->
   <div id="pin-auth">
     <h2>🏢 GOOD DREAM REAL ESTATE</h2>
-    <p>Secure Access Portal</p>
+    <p>Maintenance & Expense Management Portal</p>
     <div class="form-group">
-      <input type="password" id="input-pin" placeholder="Enter Password" style="text-align:center; font-size:16px;" required>
+      <input type="password" id="input-pin" placeholder="Enter Access Password" style="text-align:center; font-size:16px;" required>
     </div>
     <button class="btn" onclick="verifyPin()">LOGIN WITH PASSWORD</button>
     <button class="btn btn-fingerprint" onclick="verifyFingerprint()">🔓 LOGIN WITH FINGERPRINT</button>
-    <p id="pin-err" style="color:red; font-size:12px; margin-top:12px; display:none;">Authentication Failed!</p>
+    <p id="pin-err" style="color:var(--danger); font-size:12px; margin-top:12px; display:none;">Incorrect Password! Please try again.</p>
   </div>
 
   <!-- Main App View -->
   <div id="main-app">
     <div class="no-print">
-      
-      <!-- Header with Hamburger Menu -->
+
+      <!-- Header -->
       <div class="header">
-        <h1>GOOD DREAM REAL ESTATE</h1>
+        <div>
+          <h1>GOOD DREAM REAL ESTATE</h1>
+          <span>Building Maintenance & Accounts</span>
+        </div>
         <button class="menu-btn" onclick="toggleMenu()">☰</button>
       </div>
 
@@ -133,13 +178,13 @@
         <a onclick="showDashboardSummary()">📊 All Buildings Summary</a>
         <a onclick="changePasswordPrompt()">🔑 Change Password</a>
         <a onclick="logout()">🔒 Logout / Lock</a>
-        <a style="color:#bdc3c7; cursor:default; margin-top:40px; font-size:11px; text-align:center;">Managed by Shadhin</a>
+        <a style="color:#94a3b8; cursor:default; margin-top:40px; font-size:11px; text-align:center;">Managed by Shadhin</a>
       </div>
 
       <!-- All Buildings Summary Dashboard -->
       <div id="dashboard-summary" class="card">
         <h3>🏢 All Buildings & Villas Summary</h3>
-        <p style="font-size: 11px; color: #666; margin-bottom: 10px;">Click any building to view detailed maintenance records.</p>
+        <p style="font-size: 12px; color: var(--muted); margin-bottom: 12px;">Select a building below to manage maintenance records & accounts.</p>
         <div id="summary-list">Loading Summary...</div>
       </div>
 
@@ -147,28 +192,29 @@
       <div class="card" id="building-control-card">
         <h3>🏢 Select or Add Building / Villa</h3>
         <div class="form-group">
-          <label>Select Building / Villa:</label>
+          <label>Choose Building / Villa:</label>
           <select id="building-select" onchange="onBuildingSelect()">
-            <option value="">-- Choose Building --</option>
+            <option value="">-- Select Building --</option>
           </select>
         </div>
         <div class="filter-box" style="margin-top:10px;">
-          <input type="text" id="new-b-name" placeholder="New Building Name/No">
-          <button class="btn btn-add" style="width:auto; padding:0 18px;" onclick="addBuilding()">+ Add</button>
+          <input type="text" id="new-b-name" placeholder="Enter New Building Name/No" style="flex:1; padding:10px; border:1px solid #cbd5e1; border-radius:10px; font-size:13px;">
+          <button class="btn btn-add" style="width:auto; padding:0 20px;" onclick="addBuilding()">+ Add</button>
         </div>
       </div>
 
       <!-- Selected Building Dashboard Portal -->
       <div id="building-portal" style="display:none;">
-        <button class="btn" style="background:#7f8c8d; margin-bottom:12px;" onclick="showDashboardSummary()">⬅ Back to Summary Dashboard</button>
+        <button class="btn btn-back" onclick="showDashboardSummary()">⬅ Back to All Buildings Summary</button>
 
         <div class="tab-menu">
           <button class="tab-btn active" id="tab-pending-btn" onclick="switchTab('pending')">📊 Pending Hisab</button>
           <button class="tab-btn" id="tab-closed-btn" onclick="switchTab('closed')">🔒 Closed List</button>
         </div>
 
+        <!-- Date Filter & Actions -->
         <div class="card">
-          <h3>📅 Date Filter & Actions</h3>
+          <h3>📅 Filter & Account Actions</h3>
           <div class="filter-box">
             <div class="form-group">
               <label>From Date:</label>
@@ -179,18 +225,14 @@
               <input type="date" id="filter-to" onchange="renderView()">
             </div>
           </div>
-          <button class="btn btn-close" id="btn-close-act" onclick="closeAccount()">🔒 Close Account (Selected Date)</button>
-          <button class="btn btn-print" onclick="triggerPrint()">📥 Download PDF / Print Report</button>
-          <button class="btn btn-csv" onclick="exportToCSV()">📊 Export to CSV / Excel</button>
-        </div>
-
-        <div class="card">
-          <h3>📈 Expense Visual Analytics</h3>
-          <div style="width: 100%; height: 200px;">
-            <canvas id="expenseChart"></canvas>
+          <button class="btn btn-close" id="btn-close-act" onclick="closeAccount()">🔒 Close Account (Selected Date Range)</button>
+          <div class="filter-box" style="margin-top:4px;">
+            <button class="btn btn-print" onclick="triggerPrint()">📥 Print / Save PDF</button>
+            <button class="btn btn-csv" onclick="exportToCSV()">📊 Export Excel/CSV</button>
           </div>
         </div>
 
+        <!-- Add / Edit Record Form -->
         <div class="card" id="add-form-card">
           <h3 id="form-title">➕ Add Maintenance Record</h3>
           <form id="record-form">
@@ -208,16 +250,16 @@
 
             <div class="form-group">
               <label>Work Details</label>
-              <input type="text" id="u-work" placeholder="Work Description" required>
+              <input type="text" id="u-work" placeholder="Describe maintenance work..." required>
             </div>
 
             <div class="filter-box">
               <div class="form-group">
-                <label>SERVICES CHARGE (QAR)</label>
+                <label>SERVICES (QAR)</label>
                 <input type="number" step="0.01" id="u-service" value="0">
               </div>
               <div class="form-group">
-                <label>Receipt QAR</label>
+                <label>RECEIPT (QAR)</label>
                 <input type="number" step="0.01" id="u-receipt" value="0">
               </div>
               <div class="form-group">
@@ -227,21 +269,22 @@
             </div>
 
             <div class="form-group">
-              <label>Receipt / Bill Image (Camera or Gallery)</label>
-              <input type="file" id="u-receipt-file" accept="image/*" capture="environment">
+              <label>Receipt / Bill Photo (Camera or Gallery)</label>
+              <input type="file" id="u-receipt-file" accept="image/*">
             </div>
 
-            <button type="submit" class="btn" id="save-btn">Save Record</button>
+            <button type="submit" class="btn" id="save-btn">Save Maintenance Record</button>
           </form>
         </div>
 
+        <!-- Calculation Overview & Records -->
         <div class="card">
           <h3>📊 Calculation Overview (<span id="selected-b-title"></span>)</h3>
           <div class="stat-grid">
-            <div>Services Charge:<br><strong id="st-service">0.00</strong> QAR</div>
-            <div>Receipt QAR:<br><strong id="st-receipt">0.00</strong> QAR</div>
-            <div>Car Rent:<br><strong id="st-car">0.00</strong> QAR</div>
-            <div>Grand Total:<br><strong id="st-total" style="color:#c0392b;">0.00</strong> QAR</div>
+            <div class="stat-box"><span>Services Charge</span><strong id="st-service">0.00</strong> <small>QAR</small></div>
+            <div class="stat-box"><span>Receipt Amount</span><strong id="st-receipt">0.00</strong> <small>QAR</small></div>
+            <div class="stat-box"><span>Car Rent</span><strong id="st-car">0.00</strong> <small>QAR</small></div>
+            <div class="stat-box grand"><span>Grand Total</span><strong id="st-total">0.00</strong> <small>QAR</small></div>
           </div>
 
           <div id="records-list"></div>
@@ -250,7 +293,7 @@
     </div>
 
     <!-- Image Popup Modal -->
-    <div id="imageModal" class="modal">
+    <div id="imageModal" class="modal" onclick="closeModal()">
       <span class="close-modal" onclick="closeModal()">&times;</span>
       <img class="modal-content" id="modalImg">
     </div>
@@ -258,9 +301,9 @@
     <!-- Printable PDF Template -->
     <div id="printable-area">
       <div class="print-header">
-        <h1 style="font-size: 20px; color: #1e3c72; margin-bottom: 4px;">GOOD DREAM REAL ESTATE</h1>
-        <p style="font-size: 12px; color: #555;" id="print-b-title">Building Maintenance Report</p>
-        <p style="font-size: 11px; color: #666; margin-top: 4px;" id="print-date-range">Period: All Records</p>
+        <h1 style="font-size: 22px; color: #0f294a; margin-bottom: 4px;">GOOD DREAM REAL ESTATE</h1>
+        <p style="font-size: 13px; color: #334155; font-weight: 600;" id="print-b-title">Building Maintenance Report</p>
+        <p style="font-size: 11px; color: #64748b; margin-top: 4px;" id="print-date-range">Period: All Records</p>
       </div>
 
       <table class="print-table">
@@ -272,7 +315,7 @@
             <th>Services</th>
             <th>Receipt</th>
             <th>Car Rent</th>
-            <th>Total</th>
+            <th>Total (QAR)</th>
           </tr>
         </thead>
         <tbody id="print-tbody"></tbody>
@@ -283,11 +326,11 @@
           <p><strong>Total Services:</strong> <span id="p-tot-s">0.00</span> QAR</p>
           <p><strong>Total Receipt:</strong> <span id="p-tot-r">0.00</span> QAR</p>
           <p><strong>Total Car Rent:</strong> <span id="p-tot-c">0.00</span> QAR</p>
-          <p style="margin-top: 5px; font-size: 12px;"><strong>Grand Total:</strong> <span id="p-tot-g" style="color:#c0392b;">0.00</span> QAR</p>
+          <p style="margin-top: 6px; font-size: 13px;"><strong>Grand Total:</strong> <span id="p-tot-g" style="color:#dc2626;">0.00</span> QAR</p>
         </div>
         <div style="text-align: right;">
           <p><strong>Billing by Shadhin</strong></p>
-          <p style="font-size: 10px; color: #777; margin-top: 20px;">Authorized Signature</p>
+          <p style="font-size: 10px; color: #64748b; margin-top: 25px; border-top: 1px solid #94a3b8; padding-top: 4px;">Authorized Signature</p>
         </div>
       </div>
     </div>
@@ -296,11 +339,12 @@
 </div>
 
 <script>
+  // আপনার নতুন Deploy করা Apps Script Web App URL এখানে বসান
   const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyVX-TRhGLBjTqZoyFFoH-qsKSoh-3XPIP73iINlGHIqsjO3xxNT88IxFjGdpsinA/exec";
+
   let activeBuilding = "";
   let buildingRecords = [];
   let currentTab = "pending";
-  let myChart = null;
 
   window.onload = function() {
     if (localStorage.getItem("gd_app_authenticated") === "true") {
@@ -319,7 +363,7 @@
   function verifyPin() {
     const pin = document.getElementById('input-pin').value.trim();
     let savedPin = localStorage.getItem("gd_custom_pin") || "SFBD";
-    if(pin === savedPin || pin === "1234") {
+    if (pin === savedPin || pin === "1234") {
       localStorage.setItem("gd_app_authenticated", "true");
       document.getElementById('pin-auth').style.display = 'none';
       document.getElementById('main-app').style.display = 'block';
@@ -338,7 +382,7 @@
   function changePasswordPrompt() {
     toggleMenu();
     let newPin = prompt("Enter New Password/PIN:");
-    if(newPin && newPin.trim() !== "") {
+    if (newPin && newPin.trim() !== "") {
       localStorage.setItem("gd_custom_pin", newPin.trim());
       alert("✅ Password changed successfully!");
     }
@@ -363,26 +407,22 @@
         loadSummaryDashboard();
         loadBuildings();
       } catch (err) {
-        let confirmPass = prompt("Biometric unlock failed. Enter Password:");
-        let savedPin = localStorage.getItem("gd_custom_pin") || "SFBD";
-        if(confirmPass === savedPin || confirmPass === "1234") {
-          localStorage.setItem("gd_app_authenticated", "true");
-          document.getElementById('pin-auth').style.display = 'none';
-          document.getElementById('main-app').style.display = 'block';
-          loadSummaryDashboard();
-          loadBuildings();
-        }
+        fallbackPasswordPrompt();
       }
     } else {
-      let confirmPass = prompt("Fingerprint not supported. Enter Password:");
-      let savedPin = localStorage.getItem("gd_custom_pin") || "SFBD";
-      if(confirmPass === savedPin || confirmPass === "1234") {
-        localStorage.setItem("gd_app_authenticated", "true");
-        document.getElementById('pin-auth').style.display = 'none';
-        document.getElementById('main-app').style.display = 'block';
-        loadSummaryDashboard();
-        loadBuildings();
-      }
+      fallbackPasswordPrompt();
+    }
+  }
+
+  function fallbackPasswordPrompt() {
+    let confirmPass = prompt("Enter Password:");
+    let savedPin = localStorage.getItem("gd_custom_pin") || "SFBD";
+    if (confirmPass === savedPin || confirmPass === "1234") {
+      localStorage.setItem("gd_app_authenticated", "true");
+      document.getElementById('pin-auth').style.display = 'none';
+      document.getElementById('main-app').style.display = 'block';
+      loadSummaryDashboard();
+      loadBuildings();
     }
   }
 
@@ -390,15 +430,15 @@
     document.getElementById('building-portal').style.display = 'none';
     document.getElementById('dashboard-summary').style.display = 'block';
     const container = document.getElementById('summary-list');
-    container.innerHTML = "Loading Summary...";
+    container.innerHTML = "<p style='font-size:13px; color:#64748b;'>Loading Summary...</p>";
 
     try {
       const res = await fetch(`${SCRIPT_URL}?action=get_all_summary`);
       const summaries = await res.json();
       container.innerHTML = '';
 
-      if(summaries.length === 0) {
-        container.innerHTML = "<p style='font-size:12px; color:#888;'>No Buildings added yet.</p>";
+      if (summaries.length === 0) {
+        container.innerHTML = "<p style='font-size:13px; color:#64748b;'>No Buildings added yet.</p>";
         return;
       }
 
@@ -411,24 +451,24 @@
         };
         div.innerHTML = `
           <div>
-            <strong>🏢 ${item.building}</strong><br>
-            <small>Pending Records: ${item.pendingCount}</small>
+            <strong style="font-size:14px; color:var(--primary);">🏢 ${item.building}</strong><br>
+            <small style="color:var(--muted);">Pending Records: <strong>${item.pendingCount}</strong></small>
           </div>
           <div style="text-align: right;">
-            <strong style="color: #c0392b; font-size: 13px;">${item.grandTotal.toFixed(2)} QAR</strong><br>
-            <small style="color:#2980b9;">Click to View ➡</small>
+            <strong style="color: #dc2626; font-size: 14px;">${item.grandTotal.toFixed(2)} QAR</strong><br>
+            <small style="color:#2563eb; font-weight:600;">Open Details ➔</small>
           </div>
         `;
         container.appendChild(div);
       });
-    } catch(e) {
-      container.innerHTML = "<p style='font-size:12px; color:red;'>Failed to load summary.</p>";
+    } catch (e) {
+      container.innerHTML = "<p style='font-size:13px; color:var(--danger);'>Failed to load summary. Check internet or Script URL.</p>";
     }
   }
 
   function showDashboardSummary() {
     const menu = document.getElementById("mySideMenu");
-    if(menu.style.width === "250px") toggleMenu();
+    if (menu.style.width === "250px") toggleMenu();
     loadSummaryDashboard();
   }
 
@@ -438,25 +478,25 @@
       const bList = await res.json();
       const select = document.getElementById('building-select');
       select.innerHTML = '<option value="">-- Choose Building --</option>';
-      
+
       bList.forEach(b => {
         const opt = document.createElement('option');
         opt.value = b;
         opt.innerText = b;
-        if(b === activeBuilding) opt.selected = true;
+        if (b === activeBuilding) opt.selected = true;
         select.appendChild(opt);
       });
-    } catch(e) {}
+    } catch (e) {}
   }
 
   function onBuildingSelect() {
     const val = document.getElementById('building-select').value;
-    if(val) selectBuilding(val);
+    if (val) selectBuilding(val);
   }
 
   async function addBuilding() {
     const name = document.getElementById('new-b-name').value.trim();
-    if(!name) return;
+    if (!name) return;
 
     await fetch(SCRIPT_URL, {
       method: 'POST',
@@ -481,12 +521,15 @@
   }
 
   async function loadData() {
-    if(!activeBuilding) return;
+    if (!activeBuilding) return;
+    document.getElementById('records-list').innerHTML = "<p style='text-align:center; font-size:13px; color:#64748b; padding:15px;'>Loading records...</p>";
     try {
       const res = await fetch(`${SCRIPT_URL}?building=${encodeURIComponent(activeBuilding)}`);
       buildingRecords = await res.json();
       renderView();
-    } catch(e) {}
+    } catch (e) {
+      document.getElementById('records-list').innerHTML = "<p style='text-align:center; font-size:13px; color:red;'>Error loading records.</p>";
+    }
   }
 
   function switchTab(tab) {
@@ -498,22 +541,40 @@
     renderView();
   }
 
-  function getBase64(file) {
-    return new Promise((resolve, reject) => {
-      if(!file) resolve("");
+  // Compress image before uploading so it saves fast & reliably to Google Drive
+  function compressImage(file) {
+    return new Promise((resolve) => {
+      if (!file) return resolve("");
       const reader = new FileReader();
       reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = error => reject(error);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target.result;
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const MAX_WIDTH = 1000;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > MAX_WIDTH) {
+            height *= MAX_WIDTH / width;
+            width = MAX_WIDTH;
+          }
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          resolve(canvas.toDataURL('image/jpeg', 0.75));
+        };
+      };
     });
   }
 
-  // Open Image in Modal Popup
-  function viewReceipt(imgBase64) {
+  function viewReceipt(imgUrl) {
     const modal = document.getElementById('imageModal');
     const modalImg = document.getElementById('modalImg');
     modal.style.display = "block";
-    modalImg.src = imgBase64;
+    modalImg.src = imgUrl;
   }
 
   function closeModal() {
@@ -525,7 +586,7 @@
     const to = document.getElementById('filter-to').value;
     const list = document.getElementById('records-list');
     const pBody = document.getElementById('print-tbody');
-    
+
     list.innerHTML = '';
     pBody.innerHTML = '';
 
@@ -533,14 +594,18 @@
 
     let filtered = buildingRecords.filter(item => {
       let isClosed = item.closeDate && item.closeDate.toString().trim() !== "";
-      if(currentTab === 'pending' && isClosed) return false;
-      if(currentTab === 'closed' && !isClosed) return false;
+      if (currentTab === 'pending' && isClosed) return false;
+      if (currentTab === 'closed' && !isClosed) return false;
 
       let cleanDate = item.updateDate ? item.updateDate.toString().split('T')[0] : '';
-      if(from && cleanDate < from) return false;
-      if(to && cleanDate > to) return false;
+      if (from && cleanDate < from) return false;
+      if (to && cleanDate > to) return false;
       return true;
     });
+
+    if (filtered.length === 0) {
+      list.innerHTML = `<p style="text-align:center; color:var(--muted); font-size:13px; padding:16px;">No ${currentTab} records found for this filter.</p>`;
+    }
 
     filtered.forEach(item => {
       const s = parseFloat(item.servicesCharge) || 0;
@@ -551,18 +616,20 @@
       totService += s; totReceipt += r; totCar += c; totGrand += rowTot;
 
       let cleanDate = item.updateDate ? item.updateDate.toString().split('T')[0] : '';
-      let receiptHtml = item.receiptImg ? `<span class="receipt-link" onclick="viewReceipt('${item.receiptImg}')">📄 View Bill</span>` : '';
+      let receiptHtml = item.receiptImg ? `<span class="receipt-link" onclick="viewReceipt('${item.receiptImg}')">🖼️ View Receipt</span>` : '';
+      let closedBadge = item.closeDate ? `<span class="closed-badge">Closed: ${item.closeDate}</span>` : '';
 
       const div = document.createElement('div');
       div.className = 'history-item';
       div.innerHTML = `
-        <div>
-          <strong>Room ${item.roomNo}</strong> - ${item.workDetails}<br>
-          <small>${cleanDate} | Serv: ${s} | Rec: ${r} | Car: ${c}</small> ${receiptHtml}
+        <div style="flex:1; padding-right:10px;">
+          <div class="item-title"><span class="room-badge">Room ${item.roomNo}</span>${item.workDetails} ${closedBadge}</div>
+          <div class="item-meta">📅 ${cleanDate} &nbsp;|&nbsp; Serv: <strong>${s}</strong> &nbsp;|&nbsp; Rec: <strong>${r}</strong> &nbsp;|&nbsp; Car: <strong>${c}</strong></div>
+          ${receiptHtml}
         </div>
-        <div>
-          <strong>${rowTot.toFixed(2)}</strong>
-          ${currentTab === 'pending' ? `<button class="edit-btn" onclick="editRecord(${item.rowIndex}, '${cleanDate}', '${item.roomNo}', '${item.workDetails}', ${s}, ${r}, ${c})">Edit</button>` : ''}
+        <div style="text-align:right;">
+          <strong style="font-size:14px; color:var(--primary); display:block;">${rowTot.toFixed(2)} QAR</strong>
+          ${currentTab === 'pending' ? `<button class="edit-btn" onclick="editRecord(${item.rowIndex}, '${cleanDate}', '${item.roomNo}', '${item.workDetails.replace(/'/g, "\\'")}', ${s}, ${r}, ${c})">✏️ Edit</button>` : ''}
         </div>
       `;
       list.appendChild(div);
@@ -572,9 +639,9 @@
         <td>${cleanDate}</td>
         <td>${item.roomNo}</td>
         <td>${item.workDetails}</td>
-        <td>${s}</td>
-        <td>${r}</td>
-        <td>${c}</td>
+        <td>${s.toFixed(2)}</td>
+        <td>${r.toFixed(2)}</td>
+        <td>${c.toFixed(2)}</td>
         <td><strong>${rowTot.toFixed(2)}</strong></td>
       `;
       pBody.appendChild(tr);
@@ -591,37 +658,13 @@
     document.getElementById('p-tot-g').innerText = totGrand.toFixed(2);
 
     document.getElementById('print-date-range').innerText = `Period: ${from || 'Beginning'} To ${to || 'Present'}`;
-
-    updateChart(totService, totReceipt, totCar);
-  }
-
-  function updateChart(s, r, c) {
-    const ctx = document.getElementById('expenseChart').getContext('2d');
-    if (myChart) myChart.destroy();
-    myChart = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: ['Services Charge', 'Receipt QAR', 'Car Rent'],
-        datasets: [{
-          label: 'Amount in QAR',
-          data: [s, r, c],
-          backgroundColor: ['#1e3c72', '#27ae60', '#e67e22'],
-          borderWidth: 1
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: { y: { beginAtZero: true } }
-      }
-    });
   }
 
   function exportToCSV() {
-    let csvContent = "data:text/csv;charset=utf-8,Work Date,Room No,Work Details,Services Charge,Receipt QAR,Car Rent\n";
+    let csvContent = "data:text/csv;charset=utf-8,Work Date,Room No,Work Details,Services Charge,Receipt QAR,Car Rent,Close Date\n";
     buildingRecords.forEach(row => {
       let cleanDate = row.updateDate ? row.updateDate.toString().split('T')[0] : '';
-      csvContent += `"${cleanDate}","${row.roomNo}","${row.workDetails}","${row.servicesCharge}","${row.receiptQar}","${row.carRent}"\n`;
+      csvContent += `"${cleanDate}","${row.roomNo}","${row.workDetails}","${row.servicesCharge}","${row.receiptQar}","${row.carRent}","${row.closeDate || 'Pending'}"\n`;
     });
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
@@ -645,24 +688,24 @@
     document.getElementById('u-service').value = service;
     document.getElementById('u-receipt').value = receipt;
     document.getElementById('u-car').value = car;
-    document.getElementById('form-title').innerText = "✏️ Edit Record";
+    document.getElementById('form-title').innerText = "✏️ Edit Maintenance Record";
     document.getElementById('save-btn').innerText = "Update Record";
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    document.getElementById('add-form-card').scrollIntoView({ behavior: 'smooth' });
   }
 
   document.getElementById('record-form').addEventListener('submit', async (e) => {
     e.preventDefault();
     const saveBtn = document.getElementById('save-btn');
     saveBtn.disabled = true;
-    saveBtn.innerText = "Saving...";
+    saveBtn.innerText = "Saving & Uploading...";
 
     const rIndex = document.getElementById('edit-row-index').value;
     const actionType = rIndex ? "edit_record" : "add_record";
 
     const fileInput = document.getElementById('u-receipt-file');
     let receiptBase64 = "";
-    if(fileInput.files.length > 0) {
-      receiptBase64 = await getBase64(fileInput.files[0]);
+    if (fileInput.files.length > 0) {
+      receiptBase64 = await compressImage(fileInput.files[0]);
     }
 
     const payload = {
@@ -685,48 +728,68 @@
         body: JSON.stringify(payload)
       });
 
-      alert("✅ Done! Data Saved Successfully.");
+      alert("✅ Done! Record & Receipt Saved Successfully.");
       document.getElementById('record-form').reset();
       document.getElementById('edit-row-index').value = '';
       document.getElementById('form-title').innerText = "➕ Add Maintenance Record";
       document.getElementById('u-date').valueAsDate = new Date();
       await loadData();
-    } catch(err) {
-      alert("Error saving data!");
+    } catch (err) {
+      alert("❌ Error saving data! Please check your connection.");
     } finally {
       saveBtn.disabled = false;
-      saveBtn.innerText = "Save Record";
+      saveBtn.innerText = "Save Maintenance Record";
     }
   });
 
   async function closeAccount() {
     const from = document.getElementById('filter-from').value;
     const to = document.getElementById('filter-to').value;
-    if(!from || !to) { alert("Select From and To date!"); return; }
+    if (!from || !to) {
+      alert("⚠️ Please select both 'From Date' and 'To Date' first!");
+      return;
+    }
 
     let enteredPin = prompt("Enter Password to Close Account:");
     if (!enteredPin) return;
     let savedPin = localStorage.getItem("gd_custom_pin") || "SFBD";
     if (enteredPin !== savedPin && enteredPin !== "1234") {
-      alert("Incorrect Password! Account close cancelled.");
+      alert("❌ Incorrect Password! Account close cancelled.");
       return;
     }
 
-    const todayStr = new Date().toISOString().split('T')[0];
-    await fetch(SCRIPT_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({
-        action: "close_account",
-        building: activeBuilding,
-        fromDate: from,
-        toDate: to,
-        closeDate: todayStr
-      })
-    });
+    const btn = document.getElementById('btn-close-act');
+    btn.disabled = true;
+    btn.innerText = "Closing Account...";
 
-    alert("✅ Account closed successfully!");
-    loadData();
+    const todayStr = new Date().toISOString().split('T')[0];
+
+    try {
+      const res = await fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({
+          action: "close_account",
+          building: activeBuilding,
+          fromDate: from,
+          toDate: to,
+          closeDate: todayStr
+        })
+      });
+      const result = await res.json();
+
+      if (result.closedCount > 0) {
+        alert(`✅ Account closed successfully! (${result.closedCount} records moved to Closed List)`);
+      } else {
+        alert("⚠️ No pending records found between the selected dates.");
+      }
+      await loadData();
+    } catch (e) {
+      alert("❌ Error closing account!");
+    } finally {
+      btn.disabled = false;
+      btn.innerText = "🔒 Close Account (Selected Date Range)";
+    }
   }
 </script>
 
