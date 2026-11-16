@@ -3,15 +3,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Good Dream Real Estate - Building Management</title>
+  <title>Good Dream Real Estate - Maintenance & Accounts</title>
   <style>
     :root {
-      --primary: #0f294a;
-      --secondary: #1e4b85;
+      --primary: #0b2545;
+      --secondary: #134074;
       --accent: #10b981;
       --accent-hover: #059669;
       --danger: #ef4444;
-      --purple: #7c3aed;
+      --warning: #f59e0b;
+      --purple: #6d28d9;
       --bg: #f1f5f9;
       --card-bg: #ffffff;
       --text: #1e293b;
@@ -21,27 +22,32 @@
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif; }
     body { background-color: var(--bg); padding: 14px; color: var(--text); line-height: 1.5; }
-    .container { max-width: 680px; margin: 0 auto; }
+    .container { max-width: 720px; margin: 0 auto; }
 
     /* Auth Screen */
     #pin-auth {
-      background: var(--card-bg); padding: 36px 24px; border-radius: 20px; margin-top: 60px;
-      box-shadow: 0 12px 30px rgba(15, 41, 74, 0.08); text-align: center; border: 1px solid var(--border);
+      background: var(--card-bg); padding: 40px 24px; border-radius: 20px; margin-top: 60px;
+      box-shadow: 0 15px 35px rgba(11, 37, 69, 0.08); text-align: center; border: 1px solid var(--border);
     }
-    #pin-auth h2 { color: var(--primary); font-size: 22px; font-weight: 800; letter-spacing: 0.5px; margin-bottom: 6px; }
+    .brand-logo {
+      width: 56px; height: 56px; background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: #fff; border-radius: 16px; display: inline-flex; align-items: center; justify-content: center;
+      font-size: 26px; margin-bottom: 14px; box-shadow: 0 6px 15px rgba(11, 37, 69, 0.2);
+    }
+    #pin-auth h2 { color: var(--primary); font-size: 22px; font-weight: 800; letter-spacing: 0.4px; margin-bottom: 4px; }
     #pin-auth p { font-size: 13px; color: var(--muted); margin-bottom: 24px; }
 
     /* Header */
     .header {
       background: linear-gradient(135deg, var(--primary), var(--secondary));
       color: #fff; padding: 18px 22px; border-radius: 16px; margin-bottom: 16px;
-      box-shadow: 0 8px 20px rgba(15, 41, 74, 0.18); display: flex; justify-content: space-between; align-items: center;
+      box-shadow: 0 8px 20px rgba(11, 37, 69, 0.18); display: flex; justify-content: space-between; align-items: center;
     }
     .header h1 { font-size: 17px; font-weight: 700; letter-spacing: 0.4px; }
-    .header span { font-size: 11px; opacity: 0.85; display: block; font-weight: 400; }
+    .header span { font-size: 11.5px; opacity: 0.85; display: block; font-weight: 400; }
 
-    .menu-btn { background: rgba(255,255,255,0.12); border: none; color: #fff; font-size: 20px; width: 38px; height: 38px; border-radius: 10px; cursor: pointer; transition: 0.2s; }
-    .menu-btn:hover { background: rgba(255,255,255,0.22); }
+    .menu-btn { background: rgba(255,255,255,0.14); border: none; color: #fff; font-size: 20px; width: 40px; height: 40px; border-radius: 11px; cursor: pointer; transition: 0.2s; }
+    .menu-btn:hover { background: rgba(255,255,255,0.24); }
 
     /* Side Menu */
     .side-menu {
@@ -56,13 +62,21 @@
     .card { background: var(--card-bg); padding: 20px; border-radius: 16px; margin-bottom: 16px; box-shadow: 0 4px 14px rgba(0,0,0,0.03); border: 1px solid var(--border); }
     .card h3 { font-size: 15px; font-weight: 700; margin-bottom: 14px; color: var(--primary); border-bottom: 1px solid var(--border); padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
 
+    /* Global Summary Banner */
+    .global-banner {
+      background: linear-gradient(135deg, #1e293b, #0f172a); color: #fff; padding: 16px 20px;
+      border-radius: 14px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;
+    }
+    .global-banner small { color: #94a3b8; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; display: block; }
+    .global-banner strong { font-size: 20px; color: #38bdf8; }
+
     /* Forms & Inputs */
     .form-group { margin-bottom: 12px; text-align: left; }
     .form-group label { display: block; font-size: 12px; margin-bottom: 5px; color: #475569; font-weight: 600; }
     .form-group input, .form-group select {
       width: 100%; padding: 11px 12px; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 13.5px; outline: none; background: #f8fafc; color: var(--text); transition: 0.2s;
     }
-    .form-group input:focus, .form-group select:focus { border-color: var(--secondary); background: #fff; box-shadow: 0 0 0 3px rgba(30, 75, 133, 0.1); }
+    .form-group input:focus, .form-group select:focus { border-color: var(--secondary); background: #fff; box-shadow: 0 0 0 3px rgba(19, 64, 116, 0.1); }
 
     /* Buttons */
     .btn { width: 100%; padding: 12px; background: var(--accent); color: #fff; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; transition: 0.2s; }
@@ -71,7 +85,7 @@
     .btn-add { background: var(--secondary); }
     .btn-add:hover { background: var(--primary); }
     .btn-close { background: var(--purple); margin-top: 8px; }
-    .btn-close:hover { background: #6d28d9; }
+    .btn-close:hover { background: #5b21b6; }
     .btn-print { background: #dc2626; margin-top: 8px; }
     .btn-print:hover { background: #b91c1c; }
     .btn-csv { background: #d97706; margin-top: 8px; }
@@ -95,21 +109,30 @@
     .stat-box.grand { background: #fef2f2; border-color: #fecaca; }
     .stat-box.grand strong { color: #dc2626; }
 
+    /* Search Box */
+    .search-input {
+      width: 100%; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 10px;
+      font-size: 13px; margin-bottom: 14px; background: #f8fafc; outline: none;
+    }
+    .search-input:focus { border-color: var(--secondary); background: #fff; }
+
     /* History / Records List */
     .history-item {
-      display: flex; justify-content: space-between; align-items: flex-start; padding: 14px 12px;
+      display: flex; justify-content: space-between; align-items: flex-start; padding: 14px;
       border: 1px solid var(--border); border-radius: 12px; margin-bottom: 10px; background: #fff; transition: 0.2s;
     }
-    .history-item:hover { border-color: #cbd5e1; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
-    .item-title { font-size: 14px; font-weight: 700; color: var(--primary); margin-bottom: 3px; }
+    .history-item:hover { border-color: #cbd5e1; box-shadow: 0 4px 12px rgba(0,0,0,0.04); }
+    .item-title { font-size: 14px; font-weight: 700; color: var(--primary); margin-bottom: 4px; }
     .room-badge { background: #e0e7ff; color: #1e40af; padding: 2px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; margin-right: 6px; }
     .closed-badge { background: #dcfce7; color: #166534; padding: 2px 7px; border-radius: 6px; font-size: 10px; font-weight: 700; margin-left: 6px; }
     .item-meta { font-size: 12px; color: var(--muted); margin-top: 4px; }
-    .edit-btn { background: #f59e0b; color: #fff; border: none; padding: 5px 11px; border-radius: 7px; font-size: 11px; font-weight: 600; cursor: pointer; margin-top: 6px; display: inline-block; }
+    .action-btns { display: flex; gap: 6px; justify-content: flex-end; margin-top: 8px; }
+    .edit-btn { background: #f59e0b; color: #fff; border: none; padding: 5px 10px; border-radius: 7px; font-size: 11px; font-weight: 600; cursor: pointer; }
     .receipt-link {
       display: inline-flex; align-items: center; gap: 4px; background: #eff6ff; color: #2563eb;
-      padding: 3px 9px; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; margin-top: 6px; border: 1px solid #bfdbfe;
+      padding: 4px 10px; border-radius: 7px; font-size: 11px; font-weight: 600; cursor: pointer; margin-top: 6px; border: 1px solid #bfdbfe; transition: 0.2s;
     }
+    .receipt-link:hover { background: #dbeafe; }
 
     /* Summary Cards */
     .summary-card {
@@ -120,18 +143,24 @@
     .summary-card:hover { background: #f1f5f9; transform: translateX(3px); }
 
     /* Modal Popup */
-    .modal { display: none; position: fixed; z-index: 2000; padding-top: 50px; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(15, 23, 42, 0.88); text-align: center; }
-    .modal-content { margin: auto; display: block; max-width: 92%; max-height: 82vh; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
-    .close-modal { position: absolute; top: 18px; right: 26px; color: #fff; font-size: 36px; font-weight: bold; cursor: pointer; }
+    .modal {
+      display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%;
+      background-color: rgba(15, 23, 42, 0.92); backdrop-filter: blur(4px);
+      flex-direction: column; align-items: center; justify-content: center; padding: 20px;
+    }
+    .modal-content { max-width: 95%; max-height: 78vh; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.6); object-fit: contain; background: #fff; }
+    .close-modal { position: absolute; top: 18px; right: 26px; color: #fff; font-size: 36px; font-weight: bold; cursor: pointer; line-height: 1; }
+    .modal-actions { margin-top: 14px; display: flex; gap: 10px; }
+    .modal-btn { background: #2563eb; color: #fff; padding: 8px 16px; border-radius: 8px; text-decoration: none; font-size: 13px; font-weight: 600; }
 
     #main-app { display: none; }
 
     /* Print Styles */
-    .print-header { display: none; text-align: center; margin-bottom: 20px; border-bottom: 2px solid #1e3c72; padding-bottom: 12px; }
+    .print-header { display: none; text-align: center; margin-bottom: 20px; border-bottom: 2px solid #0b2545; padding-bottom: 12px; }
     .print-footer { display: none; margin-top: 30px; justify-content: space-between; align-items: flex-end; font-size: 12px; border-top: 1px solid #cbd5e1; padding-top: 14px; }
     .print-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
     .print-table th, .print-table td { border: 1px solid #cbd5e1; padding: 9px; text-align: left; font-size: 11px; }
-    .print-table th { background-color: #f1f5f9; font-weight: bold; color: #0f294a; }
+    .print-table th { background-color: #f1f5f9; font-weight: bold; color: #0b2545; }
 
     @media print {
       body * { visibility: hidden; }
@@ -149,7 +178,8 @@
 
   <!-- PIN & Fingerprint Security Section -->
   <div id="pin-auth">
-    <h2>🏢 GOOD DREAM REAL ESTATE</h2>
+    <div class="brand-logo">🏢</div>
+    <h2>GOOD DREAM REAL ESTATE</h2>
     <p>Maintenance & Expense Management Portal</p>
     <div class="form-group">
       <input type="password" id="input-pin" placeholder="Enter Access Password" style="text-align:center; font-size:16px;" required>
@@ -167,7 +197,7 @@
       <div class="header">
         <div>
           <h1>GOOD DREAM REAL ESTATE</h1>
-          <span>Building Maintenance & Accounts</span>
+          <span>Building Maintenance & Accounts System</span>
         </div>
         <button class="menu-btn" onclick="toggleMenu()">☰</button>
       </div>
@@ -178,13 +208,23 @@
         <a onclick="showDashboardSummary()">📊 All Buildings Summary</a>
         <a onclick="changePasswordPrompt()">🔑 Change Password</a>
         <a onclick="logout()">🔒 Logout / Lock</a>
-        <a style="color:#94a3b8; cursor:default; margin-top:40px; font-size:11px; text-align:center;">Managed by Shadhin</a>
+        <a style="color:#94a3b8; cursor:default; margin-top:40px; font-size:11px; text-align:center;">System by Shadhin</a>
       </div>
 
       <!-- All Buildings Summary Dashboard -->
       <div id="dashboard-summary" class="card">
         <h3>🏢 All Buildings & Villas Summary</h3>
-        <p style="font-size: 12px; color: var(--muted); margin-bottom: 12px;">Select a building below to manage maintenance records & accounts.</p>
+        <div class="global-banner">
+          <div>
+            <small>Total Pending Records</small>
+            <strong id="global-pending-count" style="color:#fff;">0</strong>
+          </div>
+          <div style="text-align:right;">
+            <small>Total Pending Amount</small>
+            <strong id="global-pending-amount">0.00 QAR</strong>
+          </div>
+        </div>
+        <p style="font-size: 12px; color: var(--muted); margin-bottom: 12px;">Click any building below to view records, upload receipts, or close accounts.</p>
         <div id="summary-list">Loading Summary...</div>
       </div>
 
@@ -287,21 +327,27 @@
             <div class="stat-box grand"><span>Grand Total</span><strong id="st-total">0.00</strong> <small>QAR</small></div>
           </div>
 
+          <input type="text" id="search-box" class="search-input" placeholder="🔍 Search by Room No or Work Details..." oninput="renderView()">
+
           <div id="records-list"></div>
         </div>
       </div>
     </div>
 
     <!-- Image Popup Modal -->
-    <div id="imageModal" class="modal" onclick="closeModal()">
-      <span class="close-modal" onclick="closeModal()">&times;</span>
-      <img class="modal-content" id="modalImg">
+    <div id="imageModal" class="modal" onclick="closeModal(event)">
+      <span class="close-modal" onclick="closeModal(event)">&times;</span>
+      <p id="img-loading-text" style="color:#fff; font-size:14px; margin-bottom:10px;">Loading Receipt Image...</p>
+      <img class="modal-content" id="modalImg" onload="document.getElementById('img-loading-text').style.display='none';">
+      <div class="modal-actions">
+        <a id="open-drive-link" href="#" target="_blank" class="modal-btn">🔗 Open Full Image in New Tab</a>
+      </div>
     </div>
 
     <!-- Printable PDF Template -->
     <div id="printable-area">
       <div class="print-header">
-        <h1 style="font-size: 22px; color: #0f294a; margin-bottom: 4px;">GOOD DREAM REAL ESTATE</h1>
+        <h1 style="font-size: 22px; color: #0b2545; margin-bottom: 4px;">GOOD DREAM REAL ESTATE</h1>
         <p style="font-size: 13px; color: #334155; font-weight: 600;" id="print-b-title">Building Maintenance Report</p>
         <p style="font-size: 11px; color: #64748b; margin-top: 4px;" id="print-date-range">Period: All Records</p>
       </div>
@@ -339,8 +385,7 @@
 </div>
 
 <script>
-  // আপনার নতুন Deploy করা Apps Script Web App URL এখানে বসান
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzEME4aMbDi9gcnjBMD2CP_vbNZL5mdb7FfIeCT5qsIWFQg1S04fhpmYiirG5tDbc8/exec";
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyVX-TRhGLBjTqZoyFFoH-qsKSoh-3XPIP73iINlGHIqsjO3xxNT88IxFjGdpsinA/exec";
 
   let activeBuilding = "";
   let buildingRecords = [];
@@ -437,12 +482,18 @@
       const summaries = await res.json();
       container.innerHTML = '';
 
+      let totalPending = 0;
+      let totalQar = 0;
+
       if (summaries.length === 0) {
         container.innerHTML = "<p style='font-size:13px; color:#64748b;'>No Buildings added yet.</p>";
         return;
       }
 
       summaries.forEach(item => {
+        totalPending += item.pendingCount;
+        totalQar += item.grandTotal;
+
         const div = document.createElement('div');
         div.className = 'summary-card';
         div.onclick = () => {
@@ -461,6 +512,9 @@
         `;
         container.appendChild(div);
       });
+
+      document.getElementById('global-pending-count').innerText = totalPending;
+      document.getElementById('global-pending-amount').innerText = totalQar.toFixed(2) + " QAR";
     } catch (e) {
       container.innerHTML = "<p style='font-size:13px; color:var(--danger);'>Failed to load summary. Check internet or Script URL.</p>";
     }
@@ -517,6 +571,7 @@
     document.getElementById('print-b-title').innerText = `Building / Villa: ${name} - Maintenance Report`;
     document.getElementById('building-portal').style.display = 'block';
     document.getElementById('u-date').valueAsDate = new Date();
+    document.getElementById('search-box').value = '';
     loadData();
   }
 
@@ -541,7 +596,6 @@
     renderView();
   }
 
-  // Compress image before uploading so it saves fast & reliably to Google Drive
   function compressImage(file) {
     return new Promise((resolve) => {
       if (!file) return resolve("");
@@ -570,20 +624,42 @@
     });
   }
 
+  // Fixed Image Viewer using Google Drive Thumbnail API
   function viewReceipt(imgUrl) {
     const modal = document.getElementById('imageModal');
     const modalImg = document.getElementById('modalImg');
-    modal.style.display = "block";
-    modalImg.src = imgUrl;
+    const loadingText = document.getElementById('img-loading-text');
+    const driveLink = document.getElementById('open-drive-link');
+
+    loadingText.style.display = "block";
+    modalImg.src = "";
+
+    let finalUrl = imgUrl;
+    let openTabUrl = imgUrl;
+
+    if (imgUrl.includes("drive.google.com")) {
+      const match = imgUrl.match(/id=([a-zA-Z0-9_-]+)/);
+      if (match && match[1]) {
+        finalUrl = `https://drive.google.com/thumbnail?id=${match[1]}&sz=w1200`;
+        openTabUrl = `https://drive.google.com/file/d/${match[1]}/view`;
+      }
+    }
+
+    driveLink.href = openTabUrl;
+    modal.style.display = "flex";
+    modalImg.src = finalUrl;
   }
 
-  function closeModal() {
-    document.getElementById('imageModal').style.display = "none";
+  function closeModal(e) {
+    if (!e || e.target.id === 'imageModal' || e.target.className === 'close-modal') {
+      document.getElementById('imageModal').style.display = "none";
+    }
   }
 
   function renderView() {
     const from = document.getElementById('filter-from').value;
     const to = document.getElementById('filter-to').value;
+    const searchQuery = document.getElementById('search-box').value.toLowerCase().trim();
     const list = document.getElementById('records-list');
     const pBody = document.getElementById('print-tbody');
 
@@ -600,11 +676,18 @@
       let cleanDate = item.updateDate ? item.updateDate.toString().split('T')[0] : '';
       if (from && cleanDate < from) return false;
       if (to && cleanDate > to) return false;
+
+      if (searchQuery) {
+        const roomMatch = item.roomNo && item.roomNo.toString().toLowerCase().includes(searchQuery);
+        const workMatch = item.workDetails && item.workDetails.toString().toLowerCase().includes(searchQuery);
+        if (!roomMatch && !workMatch) return false;
+      }
+
       return true;
     });
 
     if (filtered.length === 0) {
-      list.innerHTML = `<p style="text-align:center; color:var(--muted); font-size:13px; padding:16px;">No ${currentTab} records found for this filter.</p>`;
+      list.innerHTML = `<p style="text-align:center; color:var(--muted); font-size:13px; padding:16px;">No ${currentTab} records found.</p>`;
     }
 
     filtered.forEach(item => {
@@ -629,7 +712,11 @@
         </div>
         <div style="text-align:right;">
           <strong style="font-size:14px; color:var(--primary); display:block;">${rowTot.toFixed(2)} QAR</strong>
-          ${currentTab === 'pending' ? `<button class="edit-btn" onclick="editRecord(${item.rowIndex}, '${cleanDate}', '${item.roomNo}', '${item.workDetails.replace(/'/g, "\\'")}', ${s}, ${r}, ${c})">✏️ Edit</button>` : ''}
+          ${currentTab === 'pending' ? `
+            <div class="action-btns">
+              <button class="edit-btn" onclick="editRecord(${item.rowIndex}, '${cleanDate}', '${item.roomNo}', '${item.workDetails.replace(/'/g, "\\'")}', ${s}, ${r}, ${c})">✏️ Edit</button>
+            </div>
+          ` : ''}
         </div>
       `;
       list.appendChild(div);
